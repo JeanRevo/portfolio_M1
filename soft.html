@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+html, body {
+    margin: 0;
+    min-height: 100%;
+    background: transparent !important;
+    color: white;
+    font-family: 'Playfair Display', serif;
+}
+
+main {
+    min-height: calc(100vh - 78px);
+    padding: 55px 40px;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 42px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.intro {
+    max-width: 740px;
+    margin: 0 auto 45px;
+    text-align: center;
+    line-height: 1.6;
+    opacity: 0.86;
+    font-size: 18px;
+}
+
+.soft-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 240px);
+    gap: 25px;
+    justify-content: center;
+}
+
+.soft-card {
+    padding: 26px;
+    border-radius: 24px;
+    background: rgba(0,0,0,0.48);
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(10px);
+}
+
+.soft-card h2 {
+    margin-top: 0;
+    font-size: 23px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.soft-card svg {
+    width: 22px;
+    height: 22px;
+}
+
+.soft-card p {
+    line-height: 1.5;
+    opacity: 0.85;
+}
+
+@media (max-width: 900px) {
+    .soft-grid {
+        grid-template-columns: 1fr;
+        max-width: 340px;
+        margin: auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<main>
+    <h1 id="title"></h1>
+    <p class="intro" id="intro"></p>
+
+    <div class="soft-grid">
+        <div class="soft-card"><h2><i data-lucide="search"></i><span id="s1t"></span></h2><p id="s1d"></p></div>
+        <div class="soft-card"><h2><i data-lucide="target"></i><span id="s2t"></span></h2><p id="s2d"></p></div>
+        <div class="soft-card"><h2><i data-lucide="compass"></i><span id="s3t"></span></h2><p id="s3d"></p></div>
+        <div class="soft-card"><h2><i data-lucide="message-circle"></i><span id="s4t"></span></h2><p id="s4d"></p></div>
+        <div class="soft-card"><h2><i data-lucide="lightbulb"></i><span id="s5t"></span></h2><p id="s5d"></p></div>
+        <div class="soft-card"><h2><i data-lucide="refresh-cw"></i><span id="s6t"></span></h2><p id="s6d"></p></div>
+    </div>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const lang = params.get("lang") || "fr";
+
+const content = {
+    fr: {
+        title: "Soft skills",
+        intro: "Cette dernière section regroupe les qualités humaines qui soutiennent mon travail : comprendre, organiser, communiquer et s’adapter.",
+        s1t: "Curiosité", s1d: "Explorer, questionner et chercher à comprendre les mécanismes en profondeur.",
+        s2t: "Rigueur", s2d: "Structurer les idées, vérifier les informations et maintenir une méthode claire.",
+        s3t: "Autonomie", s3d: "Avancer seul, apprendre rapidement et trouver des solutions concrètes.",
+        s4t: "Communication", s4d: "Rendre les idées compréhensibles, transmettre les résultats et clarifier les choix.",
+        s5t: "Créativité", s5d: "Relier des univers différents : data, recherche, musique, écriture et design.",
+        s6t: "Adaptabilité", s6d: "Composer avec les contraintes, les outils et les contextes pour faire avancer les projets."
+    },
+    en: {
+        title: "Soft skills",
+        intro: "This final section gathers the human qualities that support my work: understanding, organizing, communicating, and adapting.",
+        s1t: "Curiosity", s1d: "Exploring, questioning, and seeking to understand mechanisms in depth.",
+        s2t: "Rigor", s2d: "Structuring ideas, verifying information, and maintaining a clear method.",
+        s3t: "Autonomy", s3d: "Moving forward independently, learning quickly, and finding concrete solutions.",
+        s4t: "Communication", s4d: "Making ideas understandable, sharing results, and clarifying decisions.",
+        s5t: "Creativity", s5d: "Connecting different worlds: data, research, music, writing, and design.",
+        s6t: "Adaptability", s6d: "Working with constraints, tools, and contexts to move projects forward."
+    }
+};
+
+document.getElementById("title").innerText = content[lang].title;
+document.getElementById("intro").innerText = content[lang].intro;
+
+for (let i = 1; i <= 6; i++) {
+    document.getElementById(`s${i}t`).innerText = content[lang][`s${i}t`];
+    document.getElementById(`s${i}d`).innerText = content[lang][`s${i}d`];
+}
+
+lucide.createIcons();
+</script>
+
+</body>
+</html>

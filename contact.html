@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+html, body {
+    margin: 0;
+    min-height: 100%;
+    background: transparent !important;
+    color: white;
+    font-family: 'Playfair Display', serif;
+}
+
+main {
+    min-height: calc(100vh - 78px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 55px 40px;
+    box-sizing: border-box;
+}
+
+.contact-card {
+    position: relative;
+    max-width: 900px;
+    width: 100%;
+    padding: 50px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(0,0,0,0.54), rgba(15,23,42,0.38));
+    border: 1px solid rgba(255,255,255,0.16);
+    backdrop-filter: blur(16px);
+    text-align: center;
+    overflow: hidden;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.45),
+                inset 0 0 60px rgba(120,180,255,0.04);
+}
+
+.contact-card::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(90,170,255,0.16), transparent 25%),
+        radial-gradient(circle at 70% 55%, rgba(180,120,255,0.12), transparent 28%),
+        radial-gradient(circle at 50% 90%, rgba(255,210,120,0.08), transparent 25%);
+    animation: auraMove 12s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+@keyframes auraMove {
+    from { transform: translate3d(-2%, -2%, 0) scale(1); }
+    to { transform: translate3d(2%, 3%, 0) scale(1.08); }
+}
+
+.network {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.62;
+}
+
+.network-line {
+    stroke: url(#synapseGradient);
+    stroke-width: 1.2;
+    fill: none;
+    stroke-dasharray: 14 22;
+    animation: dataFlow 3.8s linear infinite;
+    filter: drop-shadow(0 0 6px rgba(90,170,255,0.45));
+}
+
+.network-line.alt {
+    animation-duration: 5.2s;
+    opacity: 0.65;
+}
+
+@keyframes dataFlow {
+    to { stroke-dashoffset: -180; }
+}
+
+.network-node {
+    fill: rgba(255,255,255,0.95);
+    filter:
+        drop-shadow(0 0 6px rgba(90,170,255,0.95))
+        drop-shadow(0 0 16px rgba(180,120,255,0.45));
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: nodePulse 2.8s ease-in-out infinite;
+}
+
+.network-node.gold {
+    filter:
+        drop-shadow(0 0 7px rgba(255,210,120,0.9))
+        drop-shadow(0 0 18px rgba(255,210,120,0.35));
+}
+
+@keyframes nodePulse {
+    0%, 100% { transform: scale(1); opacity: .72; }
+    50% { transform: scale(1.55); opacity: 1; }
+}
+
+.contact-card > h1,
+.contact-card > p,
+.links {
+    position: relative;
+    z-index: 2;
+}
+
+h1 {
+    font-size: 46px;
+    margin: 0 0 22px;
+}
+
+p {
+    max-width: 650px;
+    margin: 0 auto;
+    font-size: 18px;
+    opacity: 0.88;
+    line-height: 1.65;
+}
+
+.links {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 38px;
+}
+
+.contact-link {
+    position: relative;
+    padding: 30px 18px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.075);
+    border: 1px solid rgba(255,255,255,0.13);
+    color: white;
+    text-decoration: none;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: transform 0.28s ease,
+                background 0.28s ease,
+                box-shadow 0.28s ease,
+                border-color 0.28s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 13px;
+}
+
+.contact-link::before {
+    content: "";
+    position: absolute;
+    inset: -80%;
+    background: radial-gradient(circle, rgba(120,180,255,0.28), transparent 42%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transform: translate(var(--mx, 0), var(--my, 0));
+}
+
+.contact-link:hover {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(180,215,255,0.35);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.45),
+                0 0 28px rgba(90,170,255,0.22);
+}
+
+.contact-link:hover::before {
+    opacity: 1;
+}
+
+.contact-link img,
+.contact-link svg {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    z-index: 1;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.contact-link span {
+    z-index: 1;
+    font-size: 15px;
+}
+
+.contact-link:hover img,
+.contact-link:hover svg {
+    transform: scale(1.16);
+    filter: drop-shadow(0 0 10px rgba(120,180,255,0.75));
+}
+
+@media (max-width: 900px) {
+    .links {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .links {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-card {
+        padding: 36px 26px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<main>
+    <div class="contact-card" id="contactCard">
+
+        <svg class="network" viewBox="0 0 820 460" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="synapseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(90,170,255,0.05)" />
+                    <stop offset="45%" stop-color="rgba(90,170,255,0.95)" />
+                    <stop offset="70%" stop-color="rgba(180,120,255,0.8)" />
+                    <stop offset="100%" stop-color="rgba(255,210,120,0.05)" />
+                </linearGradient>
+            </defs>
+
+            <g id="networkLayer">
+                <path class="network-line" d="M70 300 C190 160, 260 170, 340 90" />
+                <path class="network-line alt" d="M110 120 C250 190, 330 250, 480 180" />
+                <path class="network-line" d="M300 350 C420 250, 520 280, 700 150" />
+                <path class="network-line alt" d="M180 380 C330 300, 510 350, 735 305" />
+                <path class="network-line" d="M345 90 C470 100, 560 85, 720 180" />
+                <path class="network-line alt" d="M480 180 C560 230, 620 260, 735 305" />
+
+                <circle class="network-node" cx="70" cy="300" r="4"/>
+                <circle class="network-node gold" cx="110" cy="120" r="4"/>
+                <circle class="network-node" cx="340" cy="90" r="5"/>
+                <circle class="network-node" cx="480" cy="180" r="4"/>
+                <circle class="network-node gold" cx="700" cy="150" r="5"/>
+                <circle class="network-node" cx="735" cy="305" r="4"/>
+                <circle class="network-node" cx="300" cy="350" r="4"/>
+                <circle class="network-node gold" cx="180" cy="380" r="3.5"/>
+            </g>
+        </svg>
+
+        <h1 id="title"></h1>
+        <p id="text"></p>
+
+        <div class="links">
+            <a class="contact-link" href="mailto:briacturquety@gmail.com">
+                <i data-lucide="mail"></i>
+                <span>Email</span>
+            </a>
+
+            <a class="contact-link" href="https://www.linkedin.com/in/briac-turquety-business-consultant-ia-data-student/" target="_blank">
+                <img src="/assets/logos/linkedin.png" alt="LinkedIn">
+                <span>LinkedIn</span>
+            </a>
+
+            <a class="contact-link" href="https://github.com/JeanRevo" target="_blank">
+                <img src="/assets/logos/github.png" alt="GitHub">
+                <span>GitHub</span>
+            </a>
+
+            <a class="contact-link" href="/assets/pdf/cv-briac-t.pdf" target="_blank">
+                <i data-lucide="file-user"></i>
+                <span>CV</span>
+            </a>
+        </div>
+    </div>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const lang = params.get("lang") || "fr";
+
+const content = {
+    fr: {
+        title: "Contact & CV",
+        text: "Pour échanger autour d’un projet, d’une opportunité ou d’un sujet de recherche, vous pouvez me contacter ici."
+    },
+    en: {
+        title: "Contact & CV",
+        text: "To discuss a project, an opportunity, or a research topic, you can contact me here."
+    }
+};
+
+document.getElementById("title").innerText = content[lang].title;
+document.getElementById("text").innerText = content[lang].text;
+
+lucide.createIcons();
+
+const card = document.getElementById("contactCard");
+const networkLayer = document.getElementById("networkLayer");
+
+card.addEventListener("mousemove", (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+    networkLayer.style.transform = `translate(${x * 18}px, ${y * 14}px)`;
+});
+
+card.addEventListener("mouseleave", () => {
+    networkLayer.style.transform = "translate(0, 0)";
+});
+
+document.querySelectorAll(".contact-link").forEach(link => {
+    link.addEventListener("mousemove", (e) => {
+        const rect = link.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        link.style.transform = `translate(${x * 0.06}px, ${y * 0.06}px) translateY(-8px)`;
+        link.style.setProperty("--mx", `${x * 0.7}px`);
+        link.style.setProperty("--my", `${y * 0.7}px`);
+    });
+
+    link.addEventListener("mouseleave", () => {
+        link.style.transform = "";
+        link.style.setProperty("--mx", "0px");
+        link.style.setProperty("--my", "0px");
+    });
+});
+</script>
+
+</body>
+</html>

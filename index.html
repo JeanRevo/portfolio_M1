@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Portfolio - Briac Turquety</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Playfair Display', serif;
+    background: black;
+    color: white;
+}
+
+video {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -2;
+    opacity: 0.75;
+}
+
+.video-dark {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    z-index: -1;
+}
+
+.language-popup,
+.entry {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.language-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 10;
+    flex-direction: column;
+}
+
+.language-popup h2 {
+    font-size: 38px;
+    margin-bottom: 25px;
+}
+
+.language-popup button,
+.entry button {
+    margin: 10px;
+    padding: 13px 28px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    background: white;
+    color: black;
+    border-radius: 999px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.language-popup button:hover,
+.entry button:hover {
+    transform: translateY(-4px);
+    opacity: 0.85;
+}
+
+.entry {
+    display: none;
+}
+
+.entry-card {
+    max-width: 800px;
+    padding: 48px;
+    background: rgba(0,0,0,0.32);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 28px;
+    backdrop-filter: blur(12px);
+    transition: opacity 0.8s ease, transform 0.8s ease, border-color 0.8s ease;
+}
+
+.entry-card.disintegrating {
+    border-color: rgba(255,255,255,0);
+    background: rgba(0,0,0,0.12);
+    transform: scale(1.02);
+}
+
+h1 {
+    font-size: 46px;
+    margin: 0 0 22px;
+    font-weight: 600;
+}
+
+p {
+    font-size: 19px;
+    line-height: 1.7;
+    opacity: 0.9;
+}
+
+.cursor {
+    display: inline-block;
+    margin-left: 2px;
+    animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.falling-letter {
+    display: inline-block;
+    white-space: pre;
+    animation-name: letterFall;
+    animation-duration: 3s;
+    animation-timing-function: cubic-bezier(.35,.05,.75,.35);
+    animation-fill-mode: forwards;
+}
+
+@keyframes letterFall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+        filter: blur(0);
+    }
+
+    18% {
+        transform: translateY(12px) translateX(calc(var(--side-shift) * 0.08)) rotate(calc(var(--rotation) * 0.15)) scale(1.02);
+    }
+
+    35% {
+        transform: translateY(38px) translateX(calc(var(--side-shift) * -0.12)) rotate(calc(var(--rotation) * 0.35)) scale(0.98);
+    }
+
+    52% {
+        transform: translateY(78px) translateX(calc(var(--side-shift) * 0.22)) rotate(calc(var(--rotation) * 0.55)) scale(1.03);
+    }
+
+    70% {
+        transform: translateY(145px) translateX(calc(var(--side-shift) * -0.35)) rotate(calc(var(--rotation) * 0.75)) scale(0.96);
+    }
+
+    86% {
+        opacity: 0.85;
+        transform: translateY(calc(var(--fall-distance) * 0.72)) translateX(calc(var(--side-shift) * 0.65)) rotate(calc(var(--rotation) * 1.15)) scale(1.05);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(var(--fall-distance)) translateX(var(--side-shift)) rotate(var(--rotation)) scale(0.9);
+        filter: blur(5px);
+    }
+}
+
+#fade {
+    position: fixed;
+    inset: 0;
+    background: black;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.2s ease;
+    z-index: 20;
+}
+</style>
+</head>
+
+<body>
+
+<video autoplay muted loop playsinline id="bg-video">
+    <source src="disclaimer-video.mp4" type="video/mp4">
+</video>
+
+<div class="video-dark"></div>
+
+<audio id="music" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="keyboardSound" preload="auto">
+    <source src="keyboard.mp3" type="audio/mpeg">
+</audio>
+
+<div class="language-popup" id="languagePopup">
+    <h2>Choose your language</h2>
+    <button onclick="chooseLang('fr')">Français</button>
+    <button onclick="chooseLang('en')">English</button>
+</div>
+
+<div class="entry" id="entry">
+    <div class="entry-card" id="entryCard">
+        <h1 id="entryTitle"></h1>
+        <p><span id="entryText"></span><span class="cursor" id="cursor">|</span></p>
+        <button id="entryButton" onclick="enterPortfolio()" style="display:none;"></button>
+    </div>
+</div>
+
+<div id="fade"></div>
+
+<script>
+let selectedLang = "fr";
+let typingTimeout;
+let isTransitioning = false;
+
+const entryContent = {
+    fr: {
+        title: "Avant d’entrer",
+        text: "Ce portfolio a été pensé comme une expérience immersive, à la croisée de la recherche, de la donnée, de l’intelligence artificielle et de la création musicale. Pour en apprécier pleinement l’atmosphère, je vous conseille d’activer le son ou d’utiliser un casque.",
+        button: "Entrer dans le portfolio"
+    },
+    en: {
+        title: "Before entering",
+        text: "This portfolio was designed as an immersive experience, at the crossroads of research, data, artificial intelligence, and musical creation. To fully appreciate its atmosphere, I recommend turning on the sound or using headphones.",
+        button: "Enter the portfolio"
+    }
+};
+
+const video = document.getElementById("bg-video");
+
+video.play().catch(() => {
+    document.addEventListener("click", () => {
+        video.play();
+    }, { once: true });
+});
+
+function typeText(text, index = 0) {
+    const entryText = document.getElementById("entryText");
+    const entryButton = document.getElementById("entryButton");
+    const cursor = document.getElementById("cursor");
+    const keyboardSound = document.getElementById("keyboardSound");
+
+    if (index === 0) {
+        entryText.innerText = "";
+        entryButton.style.display = "none";
+        cursor.style.display = "inline-block";
+
+        keyboardSound.currentTime = 0;
+        keyboardSound.loop = true;
+        keyboardSound.volume = 0.18;
+        keyboardSound.play().catch(() => {});
+    }
+
+    if (index < text.length) {
+        entryText.innerText += text.charAt(index);
+
+        let delay = Math.random() * 50 + 18;
+
+        if ([".", ",", ";", ":"].includes(text.charAt(index))) {
+            delay += 180;
+        }
+
+        typingTimeout = setTimeout(() => {
+            typeText(text, index + 1);
+        }, delay);
+    } else {
+        keyboardSound.pause();
+        keyboardSound.currentTime = 0;
+
+        cursor.style.display = "none";
+        entryButton.style.display = "inline-block";
+    }
+}
+
+function chooseLang(lang) {
+    selectedLang = lang;
+
+    clearTimeout(typingTimeout);
+
+    document.getElementById("languagePopup").style.display = "none";
+    document.getElementById("entry").style.display = "flex";
+
+    document.getElementById("entryTitle").innerText = entryContent[lang].title;
+    document.getElementById("entryButton").innerText = entryContent[lang].button;
+
+    typeText(entryContent[lang].text);
+}
+
+function splitTextIntoFallingLetters(element) {
+    const text = element.innerText;
+    element.innerHTML = "";
+
+    [...text].forEach((char, index) => {
+        const span = document.createElement("span");
+        span.className = "falling-letter";
+        span.textContent = char === " " ? "\u00A0" : char;
+
+        const fallDistance = 180 + Math.random() * 300;
+        const sideShift = (Math.random() * 220 - 110);
+        const rotation = (Math.random() * 120 - 60);
+        const delay = Math.random() * 0.45 + index * 0.003;
+
+        span.style.setProperty("--fall-distance", fallDistance + "px");
+        span.style.setProperty("--side-shift", sideShift + "px");
+        span.style.setProperty("--rotation", rotation + "deg");
+        span.style.animationDelay = delay + "s";
+
+        element.appendChild(span);
+    });
+}
+
+function enterPortfolio() {
+    if (isTransitioning) return;
+    isTransitioning = true;
+
+    const audio = document.getElementById("music");
+    const fade = document.getElementById("fade");
+    const keyboardSound = document.getElementById("keyboardSound");
+    const entryCard = document.getElementById("entryCard");
+    const entryText = document.getElementById("entryText");
+    const entryTitle = document.getElementById("entryTitle");
+    const entryButton = document.getElementById("entryButton");
+    const cursor = document.getElementById("cursor");
+
+    clearTimeout(typingTimeout);
+
+    keyboardSound.pause();
+    keyboardSound.currentTime = 0;
+
+    audio.play().catch(() => {
+        console.log("Lecture audio bloquée par le navigateur.");
+    });
+
+    entryButton.style.opacity = "0";
+    entryButton.style.pointerEvents = "none";
+    cursor.style.display = "none";
+
+    splitTextIntoFallingLetters(entryTitle);
+    splitTextIntoFallingLetters(entryText);
+
+    entryCard.classList.add("disintegrating");
+
+    setTimeout(() => {
+        fade.style.opacity = "1";
+    }, 2300);
+
+    setTimeout(() => {
+        document.getElementById("entry").style.display = "none";
+
+        const iframe = document.createElement("iframe");
+        iframe.src = "map.html?lang=" + selectedLang;
+        iframe.style.width = "100vw";
+        iframe.style.height = "100vh";
+        iframe.style.border = "none";
+        iframe.style.position = "fixed";
+        iframe.style.top = "0";
+        iframe.style.left = "0";
+        iframe.style.zIndex = "5";
+
+        document.body.appendChild(iframe);
+
+        setTimeout(() => {
+            fade.style.opacity = "0";
+        }, 500);
+
+    }, 3200);
+}
+</script>
+
+</body>
+</html>

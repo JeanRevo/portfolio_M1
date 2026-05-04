@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<style>
+html, body {
+    margin: 0;
+    min-height: 100%;
+    background: transparent !important;
+    color: white;
+    font-family: 'Playfair Display', serif;
+}
+
+section {
+    min-height: calc(100vh - 78px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 40px;
+    box-sizing: border-box;
+}
+
+.bio-card {
+    max-width: 1050px;
+    padding: 45px;
+    background: rgba(0,0,0,0.48);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    filter: blur(8px);
+    animation: revealBio 1.4s ease forwards;
+    animation-delay: 2s;
+}
+
+@keyframes revealBio {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-photo {
+    width: 145px;
+    height: 145px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.55);
+    margin-bottom: 18px;
+}
+
+.name {
+    font-size: 38px;
+    margin: 0;
+}
+
+.subtitle {
+    opacity: 0.75;
+    margin-top: 8px;
+    font-size: 16px;
+}
+
+.icon-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+}
+
+.icon-title svg {
+    width: 30px;
+    height: 30px;
+}
+
+h1 {
+    font-size: 36px;
+    margin: 0 0 28px;
+    text-align: center;
+}
+
+p {
+    font-size: 18px;
+    line-height: 1.8;
+    text-align: justify;
+    opacity: 0.92;
+    white-space: pre-line;
+}
+
+.timeline-section {
+    margin-top: 55px;
+    padding-top: 35px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.timeline-title {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 35px;
+    opacity: 0.92;
+}
+
+.timeline-wrapper {
+    position: relative;
+    overflow-x: visible;
+    padding: 50px 10px 90px;
+}
+
+.timeline-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.timeline-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.25);
+    border-radius: 999px;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 96px;
+    left: 40px;
+    right: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(120,180,255,0.75), rgba(255,255,255,0.15));
+    box-shadow: 0 0 18px rgba(120,180,255,0.35);
+}
+
+.timeline {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.timeline-item {
+    position: relative;
+    width: 110px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.timeline-dot {
+    width: 38px;
+    height: 38px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.2);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 18px rgba(120,180,255,0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.timeline-dot svg {
+    width: 18px;
+    height: 18px;
+}
+
+.timeline-role {
+    font-size: 14px;
+}
+
+.timeline-place {
+    font-size: 11px;
+}
+
+.timeline-date {
+    font-size: 12px;
+}
+
+.timeline-item:hover .timeline-dot {
+    transform: translateY(-8px) scale(1.08);
+    background: rgba(255,255,255,0.16);
+    box-shadow: 0 0 28px rgba(120,180,255,0.55);
+}
+
+.timeline-date {
+    display: inline-block;
+    font-size: 14px;
+    opacity: 0.78;
+    margin-bottom: 8px;
+    cursor: help;
+    border-bottom: 1px solid rgba(255,255,255,0.35);
+}
+
+.timeline-role {
+    font-size: 16px;
+    line-height: 1.35;
+}
+
+.timeline-place {
+    font-size: 13px;
+    opacity: 0.65;
+    margin-top: 5px;
+}
+
+.timeline-tooltip {
+    display: none;
+}
+
+#floatingTooltip {
+    position: fixed;
+    width: 280px;
+    padding: 15px 17px;
+    border-radius: 16px;
+    background: rgba(0,0,0,0.9);
+    border: 1px solid rgba(255,255,255,0.16);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: left;
+    color: white;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -115%);
+    transition: opacity 0.18s ease;
+    z-index: 9999;
+}
+
+@media (max-width: 800px) {
+    section {
+        padding: 40px 22px;
+    }
+
+    .bio-card {
+        padding: 32px;
+    }
+
+    .timeline {
+        min-width: 1000px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<section>
+    <div class="bio-card">
+
+        <div class="profile-header">
+            <img src="/assets/images/profile.jpg" alt="Briac Turquety" class="profile-photo">
+            <h2 class="name">Briac Turquety</h2>
+            <div class="subtitle">Data · IA · Recherche · Musique</div>
+        </div>
+
+        <div class="icon-title">
+            <i data-lucide="book-open"></i>
+            <h1 id="title"></h1>
+        </div>
+
+        <p id="bio"></p>
+
+        <div class="timeline-section">
+            <h2 class="timeline-title" id="timelineTitle"></h2>
+
+            <div class="timeline-wrapper">
+                <div class="timeline-line"></div>
+                <div class="timeline" id="timeline"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="floatingTooltip"></div>
+</section>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const lang = params.get("lang") || "fr";
+
+const content = {
+    fr: {
+        title: "À propos de moi",
+        timelineTitle: "Parcours",
+        bio: `Ce portfolio est pensé comme un univers immersif où chaque section raconte une partie de mon parcours. Profondément attaché à la recherche, j'aborde la donnée et l'intelligence artificielle avec une approche analytique et rigoureuse. J'aime décortiquer les systèmes complexes, modéliser l'information et transformer des concepts abstraits en solutions tangibles et intelligentes. 
+        Cette appétence se prolonge par une expérimentation technique continue : je mène des recherches appliquées sur les architectures d'intelligence artificielle, concevant des pipelines d'automatisation avancés et explorant l'optimisation des modèles via des systèmes RAG (Retrieval-Augmented Generation) pour fiabiliser et contextualiser le traitement cognitif de l'information.
+
+        Cette dynamique exploratoire trouve un écho direct dans la création musicale. Guitariste et chanteur, j'ai parcouru les routes d'Europe au gré de plusieurs tournées, évoluant sur un spectre sonore qui s'étend des textures radicales du metal extrême jusqu'aux subtilités harmoniques du jazz.
+        La lecture vient parfaire cet équilibre en nourrissant continuellement ma réflexion. Qu'il s'agisse d'optimiser une architecture de données, d'implémenter un workflow automatisé, d'expérimenter une nouvelle progression musicale ou de me plonger dans un ouvrage exigeant, mon moteur reste le même : l'exigence de la recherche, une curiosité insatiable et un engagement de tous les instants.`,
+        timeline: [
+    ["2017-2019", "Licence Musicologie", "Université Rennes 2", "Major de spécialisation de recherche. Cycle d'étude dédié à l'analyse structurelle, à la méthodologie de l'écriture scientifique et à l'élaboration de protocoles de recherche rigoureux.", "music-2"],
+
+    ["2020-2021", "Licence Banque & Assurance", "Université Rennes 1", "Mention Assez Bien. Cursus opérationnel axé sur l'étude des mécanismes macro et micro-économiques, l'analyse financière et l'optimisation des structures organisationnelles.", "graduation-cap"],
+
+    ["2021", "Chargé de clientèle", "Crédit Agricole de Bruz", "Évaluation des profils et analyse des besoins en environnement bancaire. Étude des capacités de financement et implémentation de solutions sur mesure.", "landmark"],
+
+    ["2022", "Technicien E-fraude", "Crédit Agricole Bretagne (Siège)", "Analyse de données transactionnelles. Détection de signaux faibles, identification de schémas frauduleux (pattern recognition) et traitement d'anomalies systémiques. Aucun contentieux durant la période.", "shield-check"],
+
+    ["2022-2023", "Référent instruments - Professeur de Guitare", "School Music West", "Élaboration et application de protocoles pédagogiques. Suivi des performances individuelles et optimisation de la pratique instrumentale en environnement d'apprentissage collectif. 45 élèves.", "guitar"],
+
+    ["2023-2025", "Conseiller spécialisé en instruments de musique", "Sonowest", "Gestion opérationnelle et expertise technique en équipement. Analyse des indicateurs de performance, optimisation des flux et participation au déploiement de la stratégie d'entreprise. Réglage des instruments.", "store"],
+
+    ["2025-2027", "MSc Business Analytics", "Eugenia School", "Cycle axé sur l'ingénierie de la donnée et la business intelligence. Développement de compétences quantitatives, d'analyse statistique et de modélisation stratégique des processus.", "chart-no-axes-combined"],
+
+    ["2025-Aujourd’hui", "Consultant Technique & Business", "Centric Software", "Audit technique et conseil en systèmes d'information. Ingénierie des processus métiers, modélisation d'architectures logicielles, intégration de données et conduite du changement.", "briefcase-business"]
+]
+    },
+    en: {
+        title: "About me",
+        timelineTitle: "Timeline",
+        bio: `This portfolio is designed as an immersive universe where each section tells a part of my journey.
+
+Deeply attached to research, I approach data and artificial intelligence with an analytical and rigorous mindset. I enjoy breaking down complex systems, modeling information, and transforming abstract concepts into tangible and intelligent solutions.
+
+This exploratory dynamic also extends directly into musical creation. As a guitarist and singer, I have travelled across Europe through several tours, evolving across a sonic spectrum ranging from the radical textures of extreme metal to the harmonic subtleties of jazz.
+
+Reading completes this balance by continuously feeding my reflection. Whether I am optimizing a data architecture, experimenting with a new musical progression, or diving into a demanding book, my driving force remains the same: the discipline of research, insatiable curiosity, and constant commitment.`,
+        timeline: [
+            ["2017-2019", "Musicology Degree", "University of Rennes 2", "Research specialization major. Music theory, music history, scientific writing, Cubase, ProTools and MuseScore.", "music-2"],
+            ["2020-2021", "Banking & Insurance Degree", "University of Rennes 1", "Honors. Macroeconomics, microeconomics, statistics, accounting, management, Excel and PowerPoint.", "graduation-cap"],
+            ["2021", "Retail Banking Advisor", "Crédit Agricole", "Banking product sales, client portfolio management and tailored financial strategies.", "landmark"],
+            ["2022", "E-fraud Technician", "Crédit Agricole Bretagne", "Early fraud-pattern detection, around 15 fraud cases handled per day, no disputes over the period.", "shield-check"],
+            ["2022-2023", "String Instruments Lead", "School Music West", "Guitar, bass and ukulele teacher for 45 students, concerts and masterclasses organization.", "guitar"],
+            ["2023-2025", "Music Instruments Advisor", "Sonowest", "Stock management, sales-process optimization, commercial strategy and +23% revenue in 2024 vs 2023.", "store"],
+            ["2025-2027", "MSc Business Analytics", "Eugenia School", "Data collection, visualization and analysis, Python, SQL, PowerBI, Salesforce, Google Analytics, Dataiku and Tableau.", "chart-no-axes-combined"],
+            ["2025-Present", "Technical & Business Consultant", "Centric Software", "PLM development for Hermès, Green Score Capital integration, data migrations, SQL, XML and APIs.", "briefcase-business"]
+        ]
+    }
+};
+
+document.getElementById("title").innerText = content[lang].title;
+document.getElementById("bio").innerText = content[lang].bio;
+document.getElementById("timelineTitle").innerText = content[lang].timelineTitle;
+
+const timeline = document.getElementById("timeline");
+
+content[lang].timeline.forEach(item => {
+    const [date, role, place, detail, icon] = item;
+
+    timeline.innerHTML += `
+        <div class="timeline-item">
+            <div class="timeline-dot">
+                <i data-lucide="${icon}"></i>
+            </div>
+            <div class="timeline-date">${date}</div>
+            <div class="timeline-tooltip">${detail}</div>
+            <div class="timeline-role">${role}</div>
+            <div class="timeline-place">${place}</div>
+        </div>
+    `;
+});
+
+lucide.createIcons();
+
+const floatingTooltip = document.getElementById("floatingTooltip");
+
+document.querySelectorAll(".timeline-item").forEach(item => {
+    const tooltip = item.querySelector(".timeline-tooltip");
+
+    item.addEventListener("mouseenter", () => {
+        floatingTooltip.innerText = tooltip.innerText;
+        floatingTooltip.style.opacity = "1";
+    });
+
+    item.addEventListener("mousemove", (e) => {
+        floatingTooltip.style.left = e.clientX + "px";
+        floatingTooltip.style.top = (e.clientY - 18) + "px";
+    });
+
+    item.addEventListener("mouseleave", () => {
+        floatingTooltip.style.opacity = "0";
+    });
+});
+
+gsap.to(".timeline-item", {
+    opacity: 1,
+    y: 0,
+    duration: 0.9,
+    stagger: 0.12,
+    ease: "power3.out",
+    delay: 2.6
+});
+</script>
+
+</body>
+</html>

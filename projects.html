@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+html, body {
+    margin: 0;
+    min-height: 100%;
+    background: transparent !important;
+    color: white;
+    font-family: 'Playfair Display', serif;
+}
+
+main {
+    min-height: calc(100vh - 78px);
+    padding: 55px 0 70px;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 42px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.intro {
+    max-width: 800px;
+    margin: 0 auto 35px;
+    text-align: center;
+    line-height: 1.6;
+    opacity: 0.85;
+    font-size: 18px;
+    padding: 0 40px;
+}
+
+.skills-marquee {
+    width: 100vw;
+    margin-bottom: 50px;
+    overflow: hidden;
+    padding: 20px 0;
+    background: rgba(0,0,0,0.38);
+    border-top: 1px solid rgba(255,255,255,0.12);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+}
+
+.skills-track {
+    display: flex;
+    gap: 22px;
+    width: max-content;
+    animation: scrollSkills 42s linear infinite;
+}
+
+.skill-pill {
+    min-width: 135px;
+    height: 110px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-shrink: 0;
+    transition: transform 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+}
+
+.skill-pill:hover {
+    transform: translateY(-10px) scale(1.05);
+    background: rgba(255,255,255,0.16);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4),
+                0 0 20px rgba(120,180,255,0.25);
+}
+
+.skill-pill img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.skill-pill:hover img {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 8px rgba(120,180,255,0.6));
+}
+
+.skill-pill span {
+    font-size: 14px;
+}
+
+@keyframes scrollSkills {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(300px, 420px));
+    gap: 26px;
+    justify-content: center;
+    padding: 0 40px;
+}
+
+.project-card {
+    display: block;
+    min-height: 300px;
+    padding: 28px;
+    border-radius: 24px;
+    background: rgba(0,0,0,0.48);
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(10px);
+    color: white;
+    text-decoration: none;
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+}
+
+.project-card h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    font-size: 25px;
+}
+
+.project-card svg {
+    width: 22px;
+    height: 22px;
+}
+
+.project-card p {
+    line-height: 1.55;
+    opacity: 0.86;
+    font-size: 15.5px;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 22px;
+}
+
+.tags span {
+    font-size: 12px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.13);
+}
+
+.project-link {
+    display: inline-block;
+    margin-top: 22px;
+    font-size: 14px;
+    opacity: 0.85;
+    border-bottom: 1px solid white;
+}
+
+.pdf-section {
+    margin-top: 70px;
+    text-align: center;
+    padding: 0 40px;
+}
+
+.pdf-title {
+    font-size: 32px;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.pdf-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(300px, 520px));
+    gap: 26px;
+    justify-content: center;
+}
+
+.pdf-card {
+    display: block;
+    text-decoration: none;
+    color: white;
+}
+
+.pdf-preview {
+    width: 100%;
+    height: 240px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: rgba(0,0,0,0.48);
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(10px);
+    transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+
+.pdf-preview embed {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.pdf-card:hover .pdf-preview {
+    transform: translateY(-10px);
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5),
+                0 0 20px rgba(120,180,255,0.2);
+}
+
+.pdf-card span {
+    display: block;
+    margin-top: 14px;
+    font-size: 15px;
+    opacity: 0.85;
+}
+
+@media (max-width: 900px) {
+    .projects-grid,
+    .pdf-grid {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        margin: auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<main>
+    <h1 id="title"></h1>
+    <p class="intro" id="intro"></p>
+
+    <div class="skills-marquee">
+        <div class="skills-track">
+            <div class="skill-pill"><img src="/assets/logos/python.png"><span>Python</span></div>
+            <div class="skill-pill"><img src="/assets/logos/google-sheets.png"><span>Google Sheets</span></div>
+            <div class="skill-pill"><img src="/assets/logos/make.png"><span>Make</span></div>
+            <div class="skill-pill"><img src="/assets/logos/rag.png"><span>RAG</span></div>
+            <div class="skill-pill"><img src="/assets/logos/powerbi.png"><span>Power BI</span></div>
+            <div class="skill-pill"><img src="/assets/logos/tableau.png"><span>Tableau</span></div>
+            <div class="skill-pill"><img src="/assets/logos/dataiku.png"><span>Dataiku</span></div>
+            <div class="skill-pill"><img src="/assets/logos/api.png"><span>API</span></div>
+            <div class="skill-pill"><img src="/assets/logos/llm.png"><span>AI LLM</span></div>
+            <div class="skill-pill"><img src="/assets/logos/excel.png"><span>Excel</span></div>
+            <div class="skill-pill"><img src="/assets/logos/notion.png"><span>Notion</span></div>
+            <div class="skill-pill"><img src="/assets/logos/github.png"><span>GitHub</span></div>
+            <div class="skill-pill"><img src="/assets/logos/sql.png"><span>SQL</span></div>
+            <div class="skill-pill"><img src="/assets/logos/machine-learning.png"><span>Machine Learning</span></div>
+            <div class="skill-pill"><img src="/assets/logos/n8n.png"><span>n8n</span></div>
+            <div class="skill-pill"><img src="/assets/logos/dust.png"><span>Dust</span></div>
+            <div class="skill-pill"><img src="/assets/logos/scraping.png"><span>Scraping</span></div>
+            <div class="skill-pill"><img src="/assets/logos/beautifulsoup.png"><span>BeautifulSoup</span></div>
+            <div class="skill-pill"><img src="/assets/logos/cubase.png"><span>Cubase</span></div>
+
+            <div class="skill-pill"><img src="/assets/logos/python.png"><span>Python</span></div>
+            <div class="skill-pill"><img src="/assets/logos/google-sheets.png"><span>Google Sheets</span></div>
+            <div class="skill-pill"><img src="/assets/logos/make.png"><span>Make</span></div>
+            <div class="skill-pill"><img src="/assets/logos/rag.png"><span>RAG</span></div>
+            <div class="skill-pill"><img src="/assets/logos/powerbi.png"><span>Power BI</span></div>
+            <div class="skill-pill"><img src="/assets/logos/tableau.png"><span>Tableau</span></div>
+            <div class="skill-pill"><img src="/assets/logos/dataiku.png"><span>Dataiku</span></div>
+            <div class="skill-pill"><img src="/assets/logos/api.png"><span>API</span></div>
+            <div class="skill-pill"><img src="/assets/logos/llm.png"><span>AI LLM</span></div>
+            <div class="skill-pill"><img src="/assets/logos/excel.png"><span>Excel</span></div>
+        </div>
+    </div>
+
+    <div class="projects-grid">
+        <a class="project-card" href="https://github.com/JeanRevo/Synapse" target="_blank">
+            <h2><i data-lucide="brain-circuit"></i> Synapse</h2>
+            <p id="project1"></p>
+            <div class="tags"><span>RAG</span><span>HAL Science</span><span>LangChain</span><span>OpenAI</span></div>
+            <span class="project-link">Ouvrir le projet</span>
+        </a>
+
+        <a class="project-card" href="https://github.com/JeanRevo/Discogs_Python" target="_blank">
+            <h2><i data-lucide="disc-3"></i> Discogs</h2>
+            <p id="project2"></p>
+            <div class="tags"><span>Python</span><span>Scraping</span><span>BeautifulSoup</span><span>CSV</span></div>
+            <span class="project-link">Ouvrir le projet</span>
+        </a>
+
+        <a class="project-card" href="#" target="_blank">
+            <h2><i data-lucide="layout-dashboard"></i> Mirakl</h2>
+            <p id="project3"></p>
+            <div class="tags"><span>Hackathon</span><span>Dust</span><span>React</span><span>Supabase</span></div>
+            <span class="project-link">Projet finaliste</span>
+        </a>
+
+        <a class="project-card" href="https://github.com/JeanRevo/atlaspred" target="_blank">
+            <h2><i data-lucide="map"></i> AtlasPred</h2>
+            <p id="project4"></p>
+            <div class="tags"><span>Machine Learning</span><span>Data</span><span>Prediction</span></div>
+            <span class="project-link">Ouvrir le projet</span>
+        </a>
+    </div>
+
+    <div class="pdf-section">
+        <h2 class="pdf-title" id="pdfTitle"></h2>
+
+        <div class="pdf-grid">
+            <a class="pdf-card" href="/assets/pdf/hackathon-dust-make.pdf" target="_blank">
+                <div class="pdf-preview">
+                    <embed src="/assets/pdf/hackathon-dust-make.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf">
+                </div>
+                <span id="pdf1"></span>
+            </a>
+
+            <a class="pdf-card" href="/assets/pdf/dataiku-certification.pdf" target="_blank">
+                <div class="pdf-preview">
+                    <embed src="/assets/pdf/dataiku-certification.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf">
+                </div>
+                <span id="pdf2"></span>
+            </a>
+        </div>
+    </div>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const lang = params.get("lang") || "fr";
+
+const content = {
+    fr: {
+        title: "Compétences & Projets",
+        intro: "Un espace dédié aux outils que j’utilise et aux projets techniques que je construis autour de la data, de l’automatisation, de l’intelligence artificielle et de la musique.",
+        project1: "Chatbot RAG scientifique basé sur les archives ouvertes HAL Science. Le projet permet de rechercher des thèses, d’analyser des PDF, de poser des questions contextualisées et d’explorer des recommandations grâce à des embeddings, FAISS, LangChain et OpenAI.",
+        project2: "Scraper Python dédié à Discogs, conçu pour extraire les albums les plus collectionnés ainsi que leurs statistiques détaillées : labels, formats, genres, prix, notes, collections et wantlists. Le projet intègre nettoyage avancé, retries, sauvegardes CSV et version safe anti-blocage.",
+        project3: "Projet finaliste du hackathon Eugenia x Mirakl. Nous avons conçu un dashboard multi-marketplaces adaptatif : une même source de vérité dans Supabase, mais quatre lectures métiers — Finance, Ops, Marketing et Écosystème — générées dynamiquement via Dust, n8n et une interface React.",
+        project4: "Projet orienté prédiction et machine learning. AtlasPred exploite des données structurées pour construire une logique d’analyse prédictive, produire des résultats interprétables et explorer la manière dont la donnée peut soutenir la prise de décision.",
+        pdfTitle: "Certifications & Distinctions",
+        pdf1: "Victoire Hackathon Dust x Make",
+        pdf2: "Certification Dataiku"
+    },
+    en: {
+        title: "Skills & Projects",
+        intro: "A space dedicated to the tools I use and the technical projects I build around data, automation, artificial intelligence, and music.",
+        project1: "A scientific RAG chatbot built on HAL Science open archives. The project enables thesis search, PDF analysis, contextual question answering, and recommendations using embeddings, FAISS, LangChain, and OpenAI.",
+        project2: "A Python scraper for Discogs designed to extract the most collected albums and detailed statistics: labels, formats, genres, prices, ratings, collections, and wantlists. It includes advanced cleaning, retries, CSV backups, and a safer anti-blocking version.",
+        project3: "Finalist project from the Eugenia x Mirakl hackathon. We designed an adaptive multi-marketplace dashboard: one source of truth in Supabase, but four business perspectives — Finance, Ops, Marketing, and Ecosystem — dynamically generated through Dust, n8n and a React interface.",
+        project4: "A prediction and machine learning project. AtlasPred uses structured data to build predictive analysis logic, generate interpretable outputs, and explore how data can support decision-making.",
+        pdfTitle: "Certifications & Awards",
+        pdf1: "Dust x Make Hackathon Winner",
+        pdf2: "Dataiku Certification"
+    }
+};
+
+document.getElementById("title").innerText = content[lang].title;
+document.getElementById("intro").innerText = content[lang].intro;
+document.getElementById("project1").innerText = content[lang].project1;
+document.getElementById("project2").innerText = content[lang].project2;
+document.getElementById("project3").innerText = content[lang].project3;
+document.getElementById("project4").innerText = content[lang].project4;
+document.getElementById("pdfTitle").innerText = content[lang].pdfTitle;
+document.getElementById("pdf1").innerText = content[lang].pdf1;
+document.getElementById("pdf2").innerText = content[lang].pdf2;
+
+lucide.createIcons();
+</script>
+
+</body>
+</html>
