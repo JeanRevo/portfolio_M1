@@ -123,9 +123,13 @@ p {
 .falling-letter {
     display: inline-block;
     white-space: pre;
+    will-change: transform, opacity, filter;
+
     animation-name: letterFall;
-    animation-duration: 3s;
-    animation-timing-function: cubic-bezier(.35,.05,.75,.35);
+    animation-duration: 4.8s;
+
+    /* 🔥 accélération fluide (gravité naturelle) */
+    animation-timing-function: cubic-bezier(0.15, 0.8, 0.25, 1);
     animation-fill-mode: forwards;
 }
 
@@ -162,37 +166,20 @@ p {
 }
 
 @keyframes letterFall {
-    0% {
+    from {
         opacity: 1;
-        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
         filter: blur(0);
     }
 
-    18% {
-        transform: translateY(12px) translateX(calc(var(--side-shift) * 0.08)) rotate(calc(var(--rotation) * 0.15)) scale(1.02);
-    }
-
-    35% {
-        transform: translateY(38px) translateX(calc(var(--side-shift) * -0.12)) rotate(calc(var(--rotation) * 0.35)) scale(0.98);
-    }
-
-    52% {
-        transform: translateY(78px) translateX(calc(var(--side-shift) * 0.22)) rotate(calc(var(--rotation) * 0.55)) scale(1.03);
-    }
-
-    70% {
-        transform: translateY(145px) translateX(calc(var(--side-shift) * -0.35)) rotate(calc(var(--rotation) * 0.75)) scale(0.96);
-    }
-
-    86% {
-        opacity: 0.85;
-        transform: translateY(calc(var(--fall-distance) * 0.72)) translateX(calc(var(--side-shift) * 0.65)) rotate(calc(var(--rotation) * 1.15)) scale(1.05);
-    }
-
-    100% {
+    to {
         opacity: 0;
-        transform: translateY(var(--fall-distance)) translateX(var(--side-shift)) rotate(var(--rotation)) scale(0.9);
-        filter: blur(5px);
+        transform: translate3d(
+            var(--side-shift),
+            var(--fall-distance),
+            0
+        ) rotate(var(--rotation)) scale(0.9);
+        filter: blur(6px);
     }
 }
 
@@ -332,10 +319,10 @@ function splitTextIntoFallingLetters(element) {
         span.className = "falling-letter";
         span.textContent = char === " " ? "\u00A0" : char;
 
-        const fallDistance = 180 + Math.random() * 300;
-        const sideShift = (Math.random() * 220 - 110);
-        const rotation = (Math.random() * 120 - 60);
-        const delay = Math.random() * 0.45 + index * 0.003;
+        const fallDistance = 260 + Math.random() * 220;
+        const sideShift = (Math.random() * 80 - 40);
+        const rotation = (Math.random() * 35 - 17);
+        const delay = Math.random() * 0.2 + index * 0.002;
 
         span.style.setProperty("--fall-distance", fallDistance + "px");
         span.style.setProperty("--side-shift", sideShift + "px");
