@@ -143,6 +143,9 @@ const camera = new THREE.PerspectiveCamera(
 
 camera.position.set(0, 0.6, 6.5);
 
+const initialCameraPosition = new THREE.Vector3(0, 0.6, 6.5);
+const initialControlsTarget = new THREE.Vector3(0, 0, 0);
+
 const renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: true
@@ -160,6 +163,8 @@ controls.enablePan = false;
 controls.enableZoom = true;
 controls.minDistance = 0.8;
 controls.maxDistance = 9;
+controls.target.copy(initialControlsTarget);
+controls.update();
 
 scene.add(new THREE.AmbientLight(0xffffff, 3));
 
@@ -304,6 +309,12 @@ function hideTooltip() {
     researchTooltip.style.opacity = "0";
 }
 
+function resetCamera() {
+    camera.position.copy(initialCameraPosition);
+    controls.target.copy(initialControlsTarget);
+    controls.update();
+}
+
 function focusAndOpen(pointPosition, url) {
     if (isFocusing) return;
 
@@ -329,6 +340,8 @@ function focusAndOpen(pointPosition, url) {
 
     setTimeout(() => {
         window.open(focusUrl, "_blank");
+
+        resetCamera();
 
         fadeOverlay.style.opacity = "0";
         researchScene.classList.remove("focus-mode");
