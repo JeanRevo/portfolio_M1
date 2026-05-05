@@ -193,6 +193,27 @@ h1 {
     color: white;
 }
 
+.project-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.project-character {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 70px;
+    pointer-events: none;
+
+    opacity: 0.9;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.project-card:hover .project-character {
+    transform: scale(1.1) rotate(4deg);
+    opacity: 1;
+}
+
 .pdf-preview {
     width: 100%;
     height: 240px;
@@ -304,6 +325,22 @@ h1 {
             <div class="tags"><span>Machine Learning</span><span>Data</span><span>Prediction</span></div>
             <span class="project-link">Ouvrir le projet</span>
         </a>
+
+        <a class="project-card" href="https://zig-zag.fun/" target="_blank">
+            <h2><i data-lucide="shuffle"></i> Zig-Zag</h2>
+            <p id="project5"></p>
+
+            <div class="tags">
+                <span>Game</span>
+                <span>Interaction</span>
+                <span>Créativité</span>
+            </div>
+
+            <!-- perso -->
+            <img src="assets/images/perso-04.png" class="project-character">
+
+            <span class="project-link">Jouer</span>
+        </a>
     </div>
 
     <div class="pdf-section">
@@ -339,10 +376,13 @@ const content = {
         project2: "Scraper Python dédié à Discogs, conçu pour extraire les albums les plus collectionnés ainsi que leurs statistiques détaillées : labels, formats, genres, prix, notes, collections et wantlists. Le projet intègre nettoyage avancé, retries, sauvegardes CSV et version safe anti-blocage.",
         project3: "Projet finaliste du hackathon Eugenia x Mirakl. Nous avons conçu un dashboard multi-marketplaces adaptatif : une même source de vérité dans Supabase, mais quatre lectures métiers — Finance, Ops, Marketing et Écosystème — générées dynamiquement via Dust, n8n et une interface React.",
         project4: "Projet orienté prédiction et machine learning. AtlasPred exploite des données structurées pour construire une logique d’analyse prédictive, produire des résultats interprétables et explorer la manière dont la donnée peut soutenir la prise de décision.",
+        project5: "Zig-Zag est une expérience interactive en ligne basée sur la transformation progressive d’une idée. Chaque joueur reçoit une information, la modifie et la transmet, créant ainsi une chaîne créative imprévisible entre imagination, interprétation et surprise.",
+
         pdfTitle: "Certifications & Distinctions",
         pdf1: "Victoire Hackathon Dust x Make",
         pdf2: "Certification Dataiku"
     },
+
     en: {
         title: "Skills & Projects",
         intro: "A space dedicated to the tools I use and the technical projects I build around data, automation, artificial intelligence, and music.",
@@ -350,6 +390,8 @@ const content = {
         project2: "A Python scraper for Discogs designed to extract the most collected albums and detailed statistics: labels, formats, genres, prices, ratings, collections, and wantlists. It includes advanced cleaning, retries, CSV backups, and a safer anti-blocking version.",
         project3: "Finalist project from the Eugenia x Mirakl hackathon. We designed an adaptive multi-marketplace dashboard: one source of truth in Supabase, but four business perspectives — Finance, Ops, Marketing, and Ecosystem — dynamically generated through Dust, n8n and a React interface.",
         project4: "A prediction and machine learning project. AtlasPred uses structured data to build predictive analysis logic, generate interpretable outputs, and explore how data can support decision-making.",
+        project5: "Zig-Zag is an interactive online experience built around the transformation of an idea as it moves from one player to another. Each participant interprets and reshapes the input, creating an unpredictable chain between imagination, distortion, and creative evolution.",
+
         pdfTitle: "Certifications & Awards",
         pdf1: "Dust x Make Hackathon Winner",
         pdf2: "Dataiku Certification"
@@ -362,6 +404,7 @@ document.getElementById("project1").innerText = content[lang].project1;
 document.getElementById("project2").innerText = content[lang].project2;
 document.getElementById("project3").innerText = content[lang].project3;
 document.getElementById("project4").innerText = content[lang].project4;
+document.getElementById("project5").innerText = content[lang].project5;
 document.getElementById("pdfTitle").innerText = content[lang].pdfTitle;
 document.getElementById("pdf1").innerText = content[lang].pdf1;
 document.getElementById("pdf2").innerText = content[lang].pdf2;

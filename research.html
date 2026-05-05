@@ -75,6 +75,27 @@ h1 {
     transition: opacity 1.1s ease;
     z-index: 10;
 }
+
+#researchTooltip {
+    position: fixed;
+    max-width: 280px;
+    padding: 13px 16px;
+    border-radius: 16px;
+    background: rgba(0,0,0,0.82);
+    border: 1px solid rgba(255,255,255,0.16);
+    backdrop-filter: blur(12px);
+    box-shadow:
+        0 18px 40px rgba(0,0,0,0.45),
+        0 0 22px rgba(90,170,255,0.2);
+    color: white;
+    font-size: 13px;
+    line-height: 1.45;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -120%);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 9999;
+}
 </style>
 </head>
 
@@ -89,6 +110,8 @@ h1 {
         <div id="scene-fade"></div>
     </div>
 </main>
+
+<div id="researchTooltip"></div>
 
 <script type="importmap">
 {
@@ -107,6 +130,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 const container = document.getElementById("vinyl-3d");
 const fadeOverlay = document.getElementById("scene-fade");
 const researchScene = document.querySelector(".research-scene");
+const researchTooltip = document.getElementById("researchTooltip");
 
 const scene = new THREE.Scene();
 
@@ -160,18 +184,18 @@ let focusUrl = "";
 
 const pointData = [
     {
-        name: "Écran",
+        name: "Echange sur le Technical Death Metal",
         url: "https://www.youtube.com/watch?v=ihkFPNU_wzw",
         position: new THREE.Vector3(0.0, 0.82, 0.42)
     },
     {
-        name: "Clavier",
-        url: "assets/pdf/recherche-1.pdf",
+        name: "Recherche et Analyse - Gorod (Death Metal)",
+        url: "assets/pdf/recherche-gorod.pdf",
         position: new THREE.Vector3(-0.75, 0, 1)
     },
     {
-        name: "Rack audio",
-        url: "assets/pdf/recherche-2.pdf",
+        name: "Ethnomusicologie - Le rap en Afrique",
+        url: "assets/pdf/ethnomusicologie-rap-en-afrique.pdf",
         position: new THREE.Vector3(0.92, 0.6, 1.6)
     }
 ];
@@ -189,6 +213,7 @@ function createResearchPoint(data) {
 
     const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
     sphere.userData.url = data.url;
+    sphere.userData.name = data.name;
     sphere.userData.pointPosition = data.position.clone();
 
     const glowGeometry = new THREE.SphereGeometry(0.12, 32, 32);
@@ -267,8 +292,22 @@ function setMousePosition(event) {
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 }
 
+function updateTooltip(event, text) {
+    researchTooltip.innerText = text;
+    researchTooltip.style.left = event.clientX + "px";
+    researchTooltip.style.top = (event.clientY - 18) + "px";
+    researchTooltip.style.opacity = "1";
+    researchTooltip.style.transform = "translate(-50%, -120%)";
+}
+
+function hideTooltip() {
+    researchTooltip.style.opacity = "0";
+}
+
 function focusAndOpen(pointPosition, url) {
     if (isFocusing) return;
+
+    hideTooltip();
 
     isFocusing = true;
     focusUrl = url;
@@ -319,8 +358,17 @@ renderer.domElement.addEventListener("mousemove", (event) => {
 
     const intersects = raycaster.intersectObjects(clickablePoints, true);
 
-    renderer.domElement.style.cursor = intersects.length > 0 ? "pointer" : "grab";
+    if (intersects.length > 0) {
+        const object = intersects[0].object;
+        renderer.domElement.style.cursor = "pointer";
+        updateTooltip(event, object.userData.name);
+    } else {
+        renderer.domElement.style.cursor = "grab";
+        hideTooltip();
+    }
 });
+
+renderer.domElement.addEventListener("mouseleave", hideTooltip);
 
 function animate() {
     requestAnimationFrame(animate);

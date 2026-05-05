@@ -129,6 +129,38 @@ p {
     animation-fill-mode: forwards;
 }
 
+.floating-btn {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    z-index: 50;
+
+    padding: 14px 26px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+
+    background: white;
+    color: black;
+    font-family: inherit;
+    font-size: 14px;
+
+    opacity: 0;
+
+    transform: translateX(-50%);
+
+    transition: opacity 0.4s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-btn.show {
+    opacity: 1;
+}
+
+.floating-btn:hover {
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 0 18px rgba(120,180,255,0.4);
+}
+
 @keyframes letterFall {
     0% {
         opacity: 1;
@@ -202,9 +234,10 @@ p {
     <div class="entry-card" id="entryCard">
         <h1 id="entryTitle"></h1>
         <p><span id="entryText"></span><span class="cursor" id="cursor">|</span></p>
-        <button id="entryButton" onclick="enterPortfolio()" style="display:none;"></button>
     </div>
 </div>
+
+<button id="entryButton" class="floating-btn" onclick="enterPortfolio()"></button>  </div>
 
 <div id="fade"></div>
 
@@ -242,7 +275,7 @@ function typeText(text, index = 0) {
 
     if (index === 0) {
         entryText.innerText = "";
-        entryButton.style.display = "none";
+        entryButton.style.display = "block";
         cursor.style.display = "inline-block";
 
         keyboardSound.currentTime = 0;
@@ -268,7 +301,6 @@ function typeText(text, index = 0) {
         keyboardSound.currentTime = 0;
 
         cursor.style.display = "none";
-        entryButton.style.display = "inline-block";
     }
 }
 
@@ -281,7 +313,12 @@ function chooseLang(lang) {
     document.getElementById("entry").style.display = "flex";
 
     document.getElementById("entryTitle").innerText = entryContent[lang].title;
-    document.getElementById("entryButton").innerText = entryContent[lang].button;
+
+    const entryButton = document.getElementById("entryButton");
+    entryButton.innerText = entryContent[lang].button;
+
+    // 🔥 apparition immédiate du bouton
+    entryButton.classList.add("show");
 
     typeText(entryContent[lang].text);
 }
