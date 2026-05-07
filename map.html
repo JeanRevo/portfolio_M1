@@ -6,6 +6,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
 <style>
 html, body {
@@ -16,6 +17,8 @@ html, body {
     color: white;
     background: transparent;
 }
+
+
 
 video {
     position: fixed;
@@ -33,73 +36,233 @@ video {
     z-index: 1;
 }
 
-nav {
+/* HEADER */
+.site-header {
     position: fixed;
     top: 0;
-    width: 100%;
-    height: 78px;
-    display: flex;
-    justify-content: center;
+    left: 0;
+    right: 0;
+    height: 96px;
+    z-index: 100;
+    display: grid;
+    grid-template-columns: 92px 1fr auto;
     align-items: center;
-    gap: 26px;
-    background: rgba(0,0,0,0.25);
-    backdrop-filter: blur(12px);
-    z-index: 10;
+    padding: 0 28px;
+    pointer-events: none;
+    color: white;
+    background: rgba(0,0,0,.72);
+    backdrop-filter: blur(18px) saturate(130%);
+    -webkit-backdrop-filter: blur(18px) saturate(130%);
+    border-bottom: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 18px 60px rgba(0,0,0,.28);
+    transform: translateY(0);
+    transition: transform .72s cubic-bezier(.22,1,.36,1);
+    overflow: visible;
 }
 
-nav button {
-    background: none;
-    border: none;
-    color: white;
-    font-family: inherit;
-    font-size: 15px;
+.global-noise {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    opacity: .055;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
+}
+
+.site-header.header-hidden {
+    transform: translateY(-110%);
+}
+
+.logo-mark,
+nav,
+.lang-switch {
+    pointer-events: auto;
+}
+
+.logo-mark {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
     cursor: pointer;
-    opacity: 0.72;
+}
+
+.logo-mark svg {
+    width: 58px;
+    height: 58px;
+    overflow: visible;
+    animation: logoSpin 12s linear infinite;
+}
+
+.logo-mark text {
+    fill: currentColor;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.logo-mark circle {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1;
+    opacity: .55;
+}
+
+@keyframes logoSpin {
+    to { transform: rotate(360deg); }
+}
+
+nav {
+    justify-self: center;
     display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: visible;
+}
+
+.nav-btn {
+    position: relative;
+    height: 42px;
+    padding: 0 17px;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 999px;
+    background: rgba(255,255,255,.035);
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .105em;
+    text-transform: uppercase;
+    cursor: pointer;
+    overflow: hidden;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.09);
+    transition:
+        transform .42s cubic-bezier(.22,1,.36,1),
+        background .42s ease,
+        border-color .42s ease,
+        box-shadow .42s ease;
 }
 
-nav button:hover {
-    opacity: 1;
+.nav-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255,255,255,.16) 42%,
+        transparent 72%
+    );
+    transform: translateX(-120%);
+    transition: transform .85s cubic-bezier(.22,1,.36,1);
+}
+
+.nav-btn::after {
+    content: "";
+    position: absolute;
+    left: 17px;
+    right: 17px;
+    bottom: 8px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    opacity: .62;
+    transition:
+        transform .48s cubic-bezier(.22,1,.36,1),
+        transform-origin 0s linear .48s;
+}
+
+.nav-btn:hover {
     transform: translateY(-2px);
+    background: rgba(255,255,255,.075);
+    border-color: rgba(255,255,255,.32);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.14),
+        0 10px 28px rgba(0,0,0,.22);
 }
 
-nav svg {
-    width: 18px;
-    height: 18px;
+.nav-btn:hover::before {
+    transform: translateX(120%);
+}
+
+.nav-btn:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+    transition:
+        transform .48s cubic-bezier(.22,1,.36,1),
+        transform-origin 0s;
+}
+
+.nav-btn svg {
+    width: 15px;
+    height: 15px;
+    position: relative;
+    z-index: 2;
+    stroke-width: 1.75;
+    opacity: .82;
+}
+
+.nav-btn span {
+    position: relative;
+    z-index: 2;
+    white-space: nowrap;
+    transform: translateY(.5px);
 }
 
 .lang-switch {
-    position: fixed;
-    top: 24px;
-    right: 25px;
-    z-index: 11;
+    display: flex;
+    gap: 8px;
 }
 
 .lang-switch button {
-    border: none;
-    padding: 6px 10px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.045);
+    color: white;
+    font-family: inherit;
     cursor: pointer;
-    margin-left: 5px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 #content-frame {
     position: fixed;
-    top: 78px;
+    top: 0;
     left: 0;
     width: 100%;
-    height: calc(100vh - 78px);
+    height: 100vh;
     border: none;
     background: transparent;
     z-index: 2;
+
     opacity: 1;
-    transition: opacity 0.55s ease, filter 0.55s ease;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+
+    transition:
+        opacity 1.15s ease,
+        transform 1.15s cubic-bezier(.22, 1, .36, 1),
+        filter 1.15s ease;
 }
 
 #content-frame.fade-out {
     opacity: 0;
+    transform: translateY(24px) scale(.985);
+    filter: blur(8px);
+}
+
+#content-frame.fade-in {
+    opacity: 0;
+    transform: translateY(24px) scale(.985);
     filter: blur(8px);
 }
 
@@ -201,17 +364,39 @@ nav svg {
 }
 
 @media (max-width: 900px) {
-    nav {
-        gap: 13px;
+    .site-header {
+        height: 86px;
+        grid-template-columns: 54px 1fr auto;
+        padding: 0 16px;
     }
 
-    nav button {
+    nav {
+        gap: 6px;
+        overflow-x: auto;
+        max-width: 64vw;
+        justify-self: start;
+        padding-left: 12px;
+    }
+
+    .nav-btn {
+        height: 38px;
+        padding: 0 12px;
         font-size: 12px;
     }
 
-    .lang-switch {
-        top: 82px;
-        right: 15px;
+    .nav-btn svg {
+        width: 15px;
+        height: 15px;
+        position: relative;
+        z-index: 2;
+        stroke-width: 1.75;
+        opacity: .82;
+    }
+
+    .logo-mark,
+    .logo-mark svg {
+        width: 48px;
+        height: 48px;
     }
 
     .music-player {
@@ -219,6 +404,45 @@ nav svg {
         bottom: 14px;
         min-width: 210px;
     }
+
+}
+
+.music-player {
+    transition:
+        transform .85s cubic-bezier(.22,1,.36,1),
+        opacity .45s ease;
+}
+
+.music-player.collapsed {
+    transform: translateX(calc(100% - 54px));
+}
+
+.collapse-player {
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.55);
+    color: white;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    backdrop-filter: blur(12px);
+    z-index: 2;
+}
+
+.collapse-player svg {
+    width: 18px;
+    height: 18px;
+    transition: transform .55s cubic-bezier(.22,1,.36,1);
+}
+
+.music-player.collapsed .collapse-player svg {
+    transform: rotate(180deg);
 }
 </style>
 </head>
@@ -230,42 +454,62 @@ nav svg {
 </video>
 
 <div class="video-overlay"></div>
+<div class="global-noise"></div>
 
-<div class="lang-switch">
-    <button onclick="setLang('fr')">FR</button>
-    <button onclick="setLang('en')">EN</button>
-</div>
+<header class="site-header">
+    <div class="logo-mark magnetic" onclick="loadPage('about.html')" aria-label="Home">
+        <svg viewBox="0 0 100 100">
+            <defs>
+                <path id="circleText" d="M50,50 m-36,0 a36,36 0 1,1 72,0 a36,36 0 1,1 -72,0"/>
+            </defs>
+            <circle cx="50" cy="50" r="43"></circle>
+            <text>
+                <textPath href="#circleText">
+                    BRIAC T • PORTFOLIO • SOUND • RESEARCH •
+                </textPath>
+            </text>
+        </svg>
+    </div>
 
-<nav>
-    <button onclick="loadPage('about.html')">
-        <i data-lucide="user"></i>
-        <span id="nav-about"></span>
-    </button>
+    <nav>
+        <button class="nav-btn magnetic" data-page="about.html">
+            <i data-lucide="user"></i>
+            <span id="nav-about"></span>
+        </button>
 
-    <button onclick="loadPage('projects.html')">
-        <i data-lucide="code-2"></i>
-        <span id="nav-projects"></span>
-    </button>
+        <button class="nav-btn magnetic" data-page="projects.html">
+            <i data-lucide="code-2"></i>
+            <span id="nav-projects"></span>
+        </button>
 
-    <button onclick="loadPage('research.html')">
-        <i data-lucide="microscope"></i>
-        <span id="nav-research"></span>
-    </button>
+        <button class="nav-btn magnetic" data-page="research.html">
+            <i data-lucide="microscope"></i>
+            <span id="nav-research"></span>
+        </button>
 
-    <button onclick="loadPage('soft.html')">
-        <i data-lucide="sparkles"></i>
-        <span id="nav-soft"></span>
-    </button>
+        <button class="nav-btn magnetic" data-page="soft.html">
+            <i data-lucide="sparkles"></i>
+            <span id="nav-soft"></span>
+        </button>
 
-    <button onclick="loadPage('contact.html')">
-        <i data-lucide="send"></i>
-        <span id="nav-contact"></span>
-    </button>
-</nav>
+        <button class="nav-btn magnetic" data-page="contact.html">
+            <i data-lucide="send"></i>
+            <span id="nav-contact"></span>
+        </button>
+    </nav>
+
+    <div class="lang-switch">
+        <button class="magnetic" onclick="setLang('fr')">FR</button>
+        <button class="magnetic" onclick="setLang('en')">EN</button>
+    </div>
+</header>
 
 <iframe id="content-frame" src="about.html?lang=fr" allowtransparency="true"></iframe>
 
 <div class="music-player" id="musicPlayer">
+    <button class="collapse-player" id="collapsePlayer">
+        <i data-lucide="chevron-right"></i>
+    </button>
     <div class="player-top">
         <div class="track-info">
             <span>Now playing</span>
@@ -312,18 +556,48 @@ function getParentAudio() {
     return window.parent.document.getElementById("music");
 }
 
+function injectHeaderOffset() {
+    const iframe = document.getElementById("content-frame");
+    const header = document.querySelector(".site-header");
+
+    try {
+        const doc = iframe.contentDocument;
+        const offset = header.offsetHeight + 24;
+
+        doc.documentElement.style.setProperty(
+            "--header-safe-top",
+            `${offset}px`
+        );
+    } catch (e) {}
+}
+
 function loadPage(page) {
     const iframe = document.getElementById("content-frame");
+    const target = page + "?lang=" + lang;
+    const currentPage = iframe.src.split("/").pop();
 
+    if (currentPage === target) return;
+
+    iframe.classList.remove("fade-in");
     iframe.classList.add("fade-out");
 
     setTimeout(() => {
-        iframe.src = page + "?lang=" + lang;
+        iframe.src = target;
 
         iframe.onload = () => {
+            injectHeaderOffset();
+            bindIframeScroll();
+
             iframe.classList.remove("fade-out");
+            iframe.classList.add("fade-in");
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    iframe.classList.remove("fade-in");
+                });
+            });
         };
-    }, 450);
+    }, 420);
 }
 
 function setLang(l) {
@@ -363,9 +637,101 @@ function toggleMusic() {
 
 function setVolume(value) {
     const audio = getParentAudio();
+    if (audio) audio.volume = value;
+}
 
-    if (audio) {
-        audio.volume = value;
+function injectHeaderOffset() {
+    const iframe = document.getElementById("content-frame");
+
+    try {
+        const doc = iframe.contentDocument;
+        doc.documentElement.style.setProperty("--header-safe-top", "120px");
+    } catch (e) {}
+}
+
+/* CLICK TO NAVIGATE */
+document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        loadPage(btn.dataset.page);
+    });
+});
+
+
+
+/* MAGNETIC HOVER */
+document.querySelectorAll(".magnetic").forEach(el => {
+    el.addEventListener("mousemove", e => {
+        const rect = el.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        el.style.setProperty("--mx", `${x}px`);
+        el.style.setProperty("--my", `${y}px`);
+
+        gsap.to(el, {
+            x: (x - rect.width / 2) * 0.18,
+            y: (y - rect.height / 2) * 0.22,
+            duration: 0.55,
+            ease: "power3.out"
+        });
+    });
+
+    el.addEventListener("mouseleave", () => {
+        gsap.to(el, {
+            x: 0,
+            y: 0,
+            duration: 0.9,
+            ease: "elastic.out(1, 0.38)"
+        });
+    });
+});
+
+/* HEADER HIDE / SHOW ON IFRAME SCROLL */
+const siteHeader = document.querySelector(".site-header");
+
+let lastScrollY = 0;
+let tickingHeader = false;
+
+function getIframeScrollY() {
+    const iframe = document.getElementById("content-frame");
+
+    try {
+        return iframe.contentWindow.scrollY || iframe.contentDocument.documentElement.scrollTop || 0;
+    } catch (e) {
+        return 0;
+    }
+}
+
+function updateHeaderOnScroll() {
+    const currentY = getIframeScrollY();
+
+    if (currentY > lastScrollY && currentY > 120) {
+        siteHeader.classList.add("header-hidden");
+    } else {
+        siteHeader.classList.remove("header-hidden");
+    }
+
+    lastScrollY = currentY;
+    tickingHeader = false;
+}
+
+function bindIframeScroll() {
+    const iframe = document.getElementById("content-frame");
+
+    lastScrollY = 0;
+    siteHeader.classList.remove("header-hidden");
+
+    try {
+        iframe.contentWindow.removeEventListener("scroll", handleIframeScroll);
+        iframe.contentWindow.addEventListener("scroll", handleIframeScroll);
+    } catch (e) {}
+}
+
+function handleIframeScroll() {
+    if (!tickingHeader) {
+        window.requestAnimationFrame(updateHeaderOnScroll);
+        tickingHeader = true;
     }
 }
 
@@ -374,7 +740,20 @@ setLang("fr");
 setTimeout(() => {
     const audio = getParentAudio();
     if (audio) audio.volume = 0.7;
+
+    bindIframeScroll();
 }, 300);
+
+document.getElementById("content-frame").addEventListener("load", () => {
+    injectHeaderOffset();
+});
+
+/* COLLAPSE PLAYER */
+const collapseBtn = document.getElementById("collapsePlayer");
+
+collapseBtn.addEventListener("click", () => {
+    document.getElementById("musicPlayer").classList.toggle("collapsed");
+});
 
 lucide.createIcons();
 </script>

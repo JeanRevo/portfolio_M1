@@ -2,135 +2,766 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<title>Soft Skills</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
 <style>
-html, body {
-    margin: 0;
-    min-height: 100%;
-    background: transparent !important;
-    color: white;
-    font-family: 'Playfair Display', serif;
+
+:root {
+    --header-safe-top: 120px;
 }
 
-main {
-    min-height: calc(100vh - 78px);
-    padding: 55px 40px;
+:root {
+    --bg: #05060b;
+    --blue: #7dd3fc;
+    --violet: #a78bfa;
+    --acid: #d9ff5a;
+}
+
+* {
     box-sizing: border-box;
 }
 
-h1 {
-    font-size: 42px;
-    text-align: center;
-    margin-bottom: 16px;
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    color: white;
+    font-family: 'Playfair Display', serif;
+    overflow-x: hidden;
 }
 
-.intro {
-    max-width: 740px;
-    margin: 0 auto 45px;
-    text-align: center;
-    line-height: 1.6;
-    opacity: 0.86;
-    font-size: 18px;
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+
+    background-size: 48px 48px;
+
+    pointer-events: none;
+    z-index: 0;
 }
 
-.soft-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 240px);
-    gap: 25px;
+.noise {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: .045;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+}
+
+.cursor-glow {
+    position: fixed;
+    width: 360px;
+    height: 360px;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255,255,255,.055), transparent 68%);
+    z-index: 1;
+    mix-blend-mode: screen;
+}
+
+.progress {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--blue), var(--violet), var(--acid));
+    z-index: 30;
+}
+
+.webgl-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: .38;
+}
+
+#webgl {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.vertical-marquee {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: clamp(150px, 18vw, 280px);
+    height: 100vh;
+    z-index: 3;
+    overflow: hidden;
+    pointer-events: none;
+    mix-blend-mode: normal;
+}
+
+.vertical-marquee-track {
+    position: absolute;
+    left: clamp(22px, 3vw, 52px);
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6vh;
+    will-change: transform;
+}
+
+.vertical-marquee span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    white-space: nowrap;
+    font-size: clamp(74px, 11vw, 150px);
+    line-height: .9;
+    letter-spacing: -.06em;
+    font-weight: 600;
+    color: rgba(255,255,255,.86);
+    transform: translateZ(0);
+    -webkit-font-smoothing: antialiased;
+}
+
+.vertical-marquee span strong {
+    color: transparent;
+    -webkit-text-stroke: 1.4px rgba(255,255,255,.82);
+    text-stroke: 1.4px rgba(255,255,255,.82);
+}
+
+main {
+    position: relative;
+    z-index: 4;
+}
+
+.hero {
+    min-height: 100vh;
+    padding: 7vw 7vw 7vw 15vw;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
-.soft-card {
-    padding: 26px;
-    border-radius: 24px;
-    background: rgba(0,0,0,0.48);
-    border: 1px solid rgba(255,255,255,0.14);
-    backdrop-filter: blur(10px);
-}
-
-.soft-card h2 {
-    margin-top: 0;
-    font-size: 23px;
+.kicker {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    width: fit-content;
+    padding: 9px 15px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.16);
+    background: rgba(255,255,255,.055);
+    backdrop-filter: blur(14px);
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    opacity: .82;
 }
 
-.soft-card svg {
-    width: 22px;
-    height: 22px;
+h1 {
+    margin: 34px 0 24px;
+    font-size: clamp(70px, 17vw, 240px);
+    line-height: .75;
+    letter-spacing: -.09em;
+    max-width: 1050px;
 }
 
-.soft-card p {
-    line-height: 1.5;
-    opacity: 0.85;
+.intro {
+    max-width: 620px;
+    margin-left: auto;
+    font-size: clamp(18px, 2vw, 25px);
+    line-height: 1.55;
+    opacity: .78;
+}
+
+.scroll-hint {
+    position: absolute;
+    left: 15vw;
+    bottom: 42px;
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    opacity: .48;
+}
+
+.skill-section {
+    min-height: 120vh;
+    position: relative;
+    padding: 12vh 7vw 12vh 15vw;
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: 6vw;
+    align-items: center;
+}
+
+.skill-section:nth-child(even) {
+    grid-template-columns: 1.05fr 1fr;
+}
+
+.skill-section:nth-child(even) .skill-copy {
+    order: 2;
+}
+
+.skill-section:nth-child(even) .image-frame {
+    order: 1;
+}
+
+.skill-number {
+    font-size: 13px;
+    letter-spacing: .35em;
+    opacity: .45;
+    margin-bottom: 18px;
+}
+
+.skill-title {
+    font-size: clamp(54px, 9vw, 145px);
+    line-height: .82;
+    letter-spacing: -.07em;
+    margin: 0;
+}
+
+.skill-desc {
+    max-width: 520px;
+    margin-top: 28px;
+    font-size: clamp(17px, 1.4vw, 22px);
+    line-height: 1.65;
+    opacity: .78;
+}
+
+.skill-meta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.055);
+    backdrop-filter: blur(14px);
+    font-size: 13px;
+    opacity: .8;
+}
+
+.image-frame {
+    height: min(70vh, 720px);
+    min-height: 420px;
+    border-radius: 38px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.045);
+    clip-path: inset(14% 18% 14% 18% round 38px);
+    transform-origin: center;
+}
+
+.image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.38);
+    filter: saturate(.86) contrast(1.06) brightness(.82);
+}
+
+.image-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to top, rgba(5,6,11,.72), transparent 50%, rgba(5,6,11,.32)),
+        radial-gradient(circle at 50% 50%, transparent, rgba(5,6,11,.44));
+    pointer-events: none;
+}
+
+.side-index {
+    position: fixed;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 8;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.28);
+    transition: transform .4s ease, background .4s ease;
+}
+
+.dot.active {
+    transform: scale(1.8);
+    background: var(--acid);
+}
+
+.vertical-marquee span strong {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,.92);
+    text-stroke: 1px rgba(255,255,255,.92);
+}
+
+.end {
+    min-height: 80vh;
+    padding: 10vw 7vw 10vw 15vw;
+    display: flex;
+    align-items: center;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.skill-section.wide-image {
+    grid-template-columns: 1fr .82fr;
+    gap: 4vw;
+}
+
+.skill-section.wide-image .skill-copy {
+    max-width: 420px;
+}
+
+.skill-section.wide-image .skill-title {
+    font-size: clamp(34px, 5.2vw, 82px);
+    letter-spacing: -.06em;
+}
+
+.skill-section.wide-image .image-frame {
+    height: min(82vh, 820px);
+    min-height: 560px;
+    width: 100%;
+    clip-path: inset(5% 4% 5% 4% round 38px);
+}
+
+.skill-section.wide-image .skill-copy {
+    order: 2 !important;
+}
+
+.skill-section.wide-image .image-frame {
+    order: 1 !important;
+}
+
+.end h2 {
+    font-size: clamp(54px, 11vw, 160px);
+    line-height: .82;
+    letter-spacing: -.07em;
+    max-width: 950px;
+    margin: 0;
 }
 
 @media (max-width: 900px) {
-    .soft-grid {
-        grid-template-columns: 1fr;
-        max-width: 340px;
-        margin: auto;
+    .vertical-marquee {
+        width: 100px;
+        opacity: .45;
+    }
+
+    .vertical-marquee-track {
+        left: 16px;
+    }
+
+    .vertical-marquee span {
+        font-size: 76px;
     }
 }
+
 </style>
 </head>
 
 <body>
 
-<main>
-    <h1 id="title"></h1>
-    <p class="intro" id="intro"></p>
+<div class="progress" id="progress"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="noise"></div>
 
-    <div class="soft-grid">
-        <div class="soft-card"><h2><i data-lucide="search"></i><span id="s1t"></span></h2><p id="s1d"></p></div>
-        <div class="soft-card"><h2><i data-lucide="target"></i><span id="s2t"></span></h2><p id="s2d"></p></div>
-        <div class="soft-card"><h2><i data-lucide="compass"></i><span id="s3t"></span></h2><p id="s3d"></p></div>
-        <div class="soft-card"><h2><i data-lucide="message-circle"></i><span id="s4t"></span></h2><p id="s4d"></p></div>
-        <div class="soft-card"><h2><i data-lucide="lightbulb"></i><span id="s5t"></span></h2><p id="s5d"></p></div>
-        <div class="soft-card"><h2><i data-lucide="refresh-cw"></i><span id="s6t"></span></h2><p id="s6d"></p></div>
+<div class="webgl-wrap">
+    <canvas id="webgl"></canvas>
+</div>
+
+<div class="vertical-marquee" aria-hidden="true">
+    <div class="vertical-marquee-track">
+        <span><strong>Soft</strong> skills</span>
+        <span><strong>Soft</strong> skills</span>
+        <span><strong>Soft</strong> skills</span>
+        <span><strong>Soft</strong> skills</span>
     </div>
+</div>
+
+<div class="side-index" id="sideIndex"></div>
+
+<main>
+    <section class="hero">
+        <div class="kicker">
+            <i data-lucide="sparkles"></i>
+            <span>Human interface</span>
+        </div>
+
+        <h1 id="title" class="sr-only"></h1>
+        <p class="intro" id="intro"></p>
+        <div class="scroll-hint">Scroll to navigate</div>
+    </section>
+
+    <div id="sections"></div>
+
+    <section class="end">
+        <h2 id="endTitle"></h2>
+    </section>
 </main>
 
 <script>
+gsap.registerPlugin(ScrollTrigger);
+
 const params = new URLSearchParams(window.location.search);
 const lang = params.get("lang") || "fr";
+
+const cardImages = [
+    "assets/images/soft1.png",
+    "assets/images/soft2.png",
+    "assets/images/soft3.png",
+    "assets/images/soft4.png",
+    "assets/images/soft10.jpg",
+    "assets/images/soft11.jpg"
+];
+
+const backgroundImages = [
+    "assets/images/soft7.png",
+    "assets/images/soft8.jpg",
+    "assets/images/soft3.png",
+    "assets/images/soft9.jpg",
+    "assets/images/soft5.png",
+    "assets/images/soft6.png",
+];
 
 const content = {
     fr: {
         title: "Soft skills",
-        intro: "Cette dernière section regroupe les qualités humaines qui soutiennent mon travail : comprendre, organiser, communiquer et s’adapter.",
-        s1t: "Curiosité", s1d: "Explorer, questionner et chercher à comprendre les mécanismes en profondeur.",
-        s2t: "Rigueur", s2d: "Structurer les idées, vérifier les informations et maintenir une méthode claire.",
-        s3t: "Autonomie", s3d: "Avancer seul, apprendre rapidement et trouver des solutions concrètes.",
-        s4t: "Communication", s4d: "Rendre les idées compréhensibles, transmettre les résultats et clarifier les choix.",
-        s5t: "Créativité", s5d: "Relier des univers différents : data, recherche, musique, écriture et design.",
-        s6t: "Adaptabilité", s6d: "Composer avec les contraintes, les outils et les contextes pour faire avancer les projets."
+        intro: "Une navigation organique dans les qualités humaines qui soutiennent mon travail : comprendre, organiser, communiquer, créer et s’adapter.",
+        end: "La technique donne la forme. L’humain donne la direction.",
+        items: [
+            ["search", "Curiosité", "Explorer, questionner et chercher à comprendre les mécanismes en profondeur.", "Observation"],
+            ["target", "Rigueur", "Structurer les idées, vérifier les informations et maintenir une méthode claire.", "Méthode"],
+            ["compass", "Autonomie", "Avancer seul, apprendre rapidement et trouver des solutions concrètes.", "Direction"],
+            ["message-circle", "Communication", "Rendre les idées compréhensibles, transmettre les résultats et clarifier les choix.", "Transmission"],
+            ["lightbulb", "Créativité", "Relier des univers différents : data, recherche, musique, écriture et design.", "Connexion"],
+            ["refresh-cw", "Adaptabilité", "Composer avec les contraintes, les outils et les contextes pour faire avancer les projets.", "Mouvement"]
+        ]
     },
     en: {
         title: "Soft skills",
-        intro: "This final section gathers the human qualities that support my work: understanding, organizing, communicating, and adapting.",
-        s1t: "Curiosity", s1d: "Exploring, questioning, and seeking to understand mechanisms in depth.",
-        s2t: "Rigor", s2d: "Structuring ideas, verifying information, and maintaining a clear method.",
-        s3t: "Autonomy", s3d: "Moving forward independently, learning quickly, and finding concrete solutions.",
-        s4t: "Communication", s4d: "Making ideas understandable, sharing results, and clarifying decisions.",
-        s5t: "Creativity", s5d: "Connecting different worlds: data, research, music, writing, and design.",
-        s6t: "Adaptability", s6d: "Working with constraints, tools, and contexts to move projects forward."
+        intro: "An organic navigation through the human qualities that support my work: understanding, organizing, communicating, creating, and adapting.",
+        end: "Technique gives form. Human sense gives direction.",
+        items: [
+            ["search", "Curiosity", "Exploring, questioning, and seeking to understand mechanisms in depth.", "Observation"],
+            ["target", "Rigor", "Structuring ideas, verifying information, and maintaining a clear method.", "Method"],
+            ["compass", "Autonomy", "Moving forward independently, learning quickly, and finding concrete solutions.", "Direction"],
+            ["message-circle", "Communication", "Making ideas understandable, sharing results, and clarifying decisions.", "Transmission"],
+            ["lightbulb", "Creativity", "Connecting different worlds: data, research, music, writing, and design.", "Connection"],
+            ["refresh-cw", "Adaptability", "Working with constraints, tools, and contexts to move projects forward.", "Movement"]
+        ]
     }
 };
 
-document.getElementById("title").innerText = content[lang].title;
-document.getElementById("intro").innerText = content[lang].intro;
+const data = content[lang] || content.fr;
 
-for (let i = 1; i <= 6; i++) {
-    document.getElementById(`s${i}t`).innerText = content[lang][`s${i}t`];
-    document.getElementById(`s${i}d`).innerText = content[lang][`s${i}d`];
+document.getElementById("title").innerText = data.title;
+document.getElementById("intro").innerText = data.intro;
+document.getElementById("endTitle").innerText = data.end;
+
+const sectionsContainer = document.getElementById("sections");
+const sideIndex = document.getElementById("sideIndex");
+
+data.items.forEach((item, index) => {
+    const section = document.createElement("section");
+    section.className = "skill-section";
+    if (index === 3) {
+    section.classList.add("wide-image");
 }
+    section.dataset.index = index;
+
+    section.innerHTML = `
+        <div class="skill-copy">
+            <div class="skill-number">0${index + 1} / 06</div>
+            <h2 class="skill-title">${item[1]}</h2>
+            <p class="skill-desc">${item[2]}</p>
+            <div class="skill-meta">
+                <span class="pill"><i data-lucide="${item[0]}"></i>${item[3]}</span>
+                <span class="pill">Soft system</span>
+            </div>
+        </div>
+
+        <figure class="image-frame">
+            <img src="${cardImages[index]}" alt="">
+        </figure>
+    `;
+
+    sectionsContainer.appendChild(section);
+
+    const dot = document.createElement("div");
+    dot.className = "dot";
+    sideIndex.appendChild(dot);
+});
 
 lucide.createIcons();
+
+const lenis = new Lenis({
+    lerp: 0.075,
+    wheelMultiplier: 0.9,
+    smoothWheel: true
+});
+
+lenis.on("scroll", ScrollTrigger.update);
+
+gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+});
+
+gsap.ticker.lagSmoothing(0);
+
+const progress = document.getElementById("progress");
+
+ScrollTrigger.create({
+    start: 0,
+    end: "max",
+    onUpdate: self => {
+        progress.style.width = `${self.progress * 100}%`;
+    }
+});
+
+gsap.to(".vertical-marquee-track", {
+    yPercent: -50,
+    ease: "none",
+    scrollTrigger: {
+        trigger: document.body,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.2
+    }
+});
+
+document.querySelectorAll(".skill-section").forEach((section, index) => {
+    const title = section.querySelector(".skill-title");
+    const desc = section.querySelector(".skill-desc");
+    const meta = section.querySelector(".skill-meta");
+    const frame = section.querySelector(".image-frame");
+    const img = section.querySelector("img");
+    const dots = document.querySelectorAll(".dot");
+
+    gsap.fromTo(
+        [title, desc, meta],
+        { y: 90, opacity: 0 },
+        {
+            y: 0,
+            opacity: 1,
+            duration: 1.15,
+            ease: "power4.out",
+            stagger: .12,
+            scrollTrigger: {
+                trigger: section,
+                start: "top 72%",
+                end: "center center",
+                scrub: .8
+            }
+        }
+    );
+
+    gsap.to(frame, {
+        clipPath: "inset(0% 0% 0% 0% round 38px)",
+        ease: "none",
+        scrollTrigger: {
+            trigger: section,
+            start: "top 85%",
+            end: "bottom 25%",
+            scrub: true
+        }
+    });
+
+    gsap.to(img, {
+        scale: 1.04,
+        yPercent: -8,
+        ease: "none",
+        scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+        }
+    });
+
+    ScrollTrigger.create({
+        trigger: section,
+        start: "top center",
+        end: "bottom center",
+        onEnter: () => setActive(index),
+        onEnterBack: () => setActive(index)
+    });
+
+    function setActive(i) {
+        dots.forEach((dot, d) => dot.classList.toggle("active", d === i));
+        transitionTexture(i);
+    }
+});
+
+/* Cursor */
+const cursorGlow = document.getElementById("cursorGlow");
+
+window.addEventListener("mousemove", e => {
+    cursorGlow.style.left = `${e.clientX}px`;
+    cursorGlow.style.top = `${e.clientY}px`;
+});
+
+/* WebGL background transition */
+const canvas = document.getElementById("webgl");
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const loader = new THREE.TextureLoader();
+
+const textures = backgroundImages.map(src => {
+    const t = loader.load(src);
+    t.minFilter = THREE.LinearFilter;
+    t.magFilter = THREE.LinearFilter;
+    t.wrapS = THREE.ClampToEdgeWrapping;
+    t.wrapT = THREE.ClampToEdgeWrapping;
+    return t;
+});
+
+const vertexShader = `
+varying vec2 vUv;
+void main() {
+    vUv = uv;
+    gl_Position = vec4(position, 1.0);
+}
+`;
+
+const fragmentShader = `
+precision mediump float;
+
+uniform float uProgress;
+uniform float uTime;
+uniform sampler2D uTexture1;
+uniform sampler2D uTexture2;
+
+varying vec2 vUv;
+
+float random(vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+}
+
+float noise(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+
+void main() {
+    vec2 uv = vUv;
+
+    float n = noise(vec2(uv.x * 3.0 + uTime * .08, uv.y * 4.0 - uTime * .05));
+    float wave = sin((uv.y + n * .26 + uProgress) * 9.0);
+    float strength = sin(uProgress * 3.141592);
+
+    vec2 distort = vec2(wave * .055, n * .05) * strength;
+
+    vec2 uv1 = uv + distort;
+    vec2 uv2 = uv - distort;
+
+    vec4 tex1 = texture2D(uTexture1, uv1);
+    vec4 tex2 = texture2D(uTexture2, uv2);
+
+    float chroma = .016 * strength;
+    tex2.r = texture2D(uTexture2, uv2 + vec2(chroma, 0.0)).r;
+    tex2.b = texture2D(uTexture2, uv2 - vec2(chroma, 0.0)).b;
+
+    vec4 color = mix(tex1, tex2, smoothstep(0.0, 1.0, uProgress));
+
+    color.rgb *= .62;
+    color.rgb += vec3(.015, .025, .055);
+
+    gl_FragColor = color;
+}
+`;
+
+const material = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+        uProgress: { value: 0 },
+        uTime: { value: 0 },
+        uTexture1: { value: textures[0] },
+        uTexture2: { value: textures[1] || textures[0] }
+    }
+});
+
+scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
+
+let current = 0;
+let busy = false;
+
+function transitionTexture(next) {
+    if (busy || next === current) return;
+
+    busy = true;
+    material.uniforms.uTexture1.value = textures[current];
+    material.uniforms.uTexture2.value = textures[next];
+    material.uniforms.uProgress.value = 0;
+
+    gsap.to(material.uniforms.uProgress, {
+        value: 1,
+        duration: 1.25,
+        ease: "power3.inOut",
+        onComplete: () => {
+            current = next;
+            material.uniforms.uTexture1.value = textures[current];
+            material.uniforms.uProgress.value = 0;
+            busy = false;
+        }
+    });
+}
+
+function resize() {
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+}
+
+function render(t) {
+    material.uniforms.uTime.value = t * .001;
+    renderer.render(scene, camera);
+    requestAnimationFrame(render);
+}
+
+window.addEventListener("resize", resize);
+resize();
+requestAnimationFrame(render);
 </script>
 
 </body>

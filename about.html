@@ -3,25 +3,129 @@
 <head>
 <meta charset="UTF-8">
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
 <style>
+:root {
+    --header-safe-top: 120px;
+    --blue: #7dd3fc;
+    --violet: #a78bfa;
+    --acid: #d9ff5a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 html, body {
     margin: 0;
     min-height: 100%;
     background: transparent !important;
     color: white;
     font-family: 'Playfair Display', serif;
+    overflow-x: hidden;
+}
+
+.progress {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--blue), var(--violet), var(--acid));
+    z-index: 50;
+}
+
+.vertical-marquee {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: clamp(150px, 16vw, 240px);
+    height: 100vh;
+    z-index: 6;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(8px);
+}
+
+.vertical-marquee-track {
+    position: absolute;
+    left: clamp(20px, 2.6vw, 42px);
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6vh;
+    will-change: transform;
+}
+
+.vertical-marquee span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    white-space: nowrap;
+    font-size: clamp(52px, 8vw, 116px);
+    line-height: .95;
+    letter-spacing: -.045em;
+    font-weight: 600;
+    color: rgba(255,255,255,.88);
+    transform: translateZ(0);
+    -webkit-font-smoothing: antialiased;
+    mix-blend-mode: screen;
+}
+
+.vertical-marquee span strong {
+    color: transparent;
+    -webkit-text-stroke: 1.4px rgba(255,255,255,.84);
+    text-stroke: 1.4px rgba(255,255,255,.84);
+}
+
+.vertical-marquee::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: rgba(0,0,0,.55);
+    -webkit-mask-image: linear-gradient(
+        90deg,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,.85) 28%,
+        rgba(0,0,0,.35) 52%,
+        rgba(0,0,0,.08) 72%,
+        rgba(0,0,0,0) 100%
+    );
+    mask-image: linear-gradient(
+        90deg,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,.85) 28%,
+        rgba(0,0,0,.35) 52%,
+        rgba(0,0,0,.08) 72%,
+        rgba(0,0,0,0) 100%
+    );
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.vertical-marquee.reveal {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    transition:
+        opacity 1.4s ease,
+        transform 1.4s ease,
+        filter 1.4s ease;
 }
 
 section {
-    min-height: calc(100vh - 78px);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 60px 40px;
+    padding: var(--header-safe-top) 40px 60px 15vw;
     box-sizing: border-box;
 }
 
@@ -32,7 +136,6 @@ section {
     border: 1px solid rgba(255,255,255,0.14);
     border-radius: 24px;
     backdrop-filter: blur(10px);
-
     opacity: 0;
     transform: translateY(24px) scale(0.98);
     filter: blur(8px);
@@ -118,15 +221,6 @@ p {
     padding: 50px 10px 90px;
 }
 
-.timeline-wrapper::-webkit-scrollbar {
-    height: 6px;
-}
-
-.timeline-wrapper::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.25);
-    border-radius: 999px;
-}
-
 .timeline-line {
     position: absolute;
     top: 96px;
@@ -168,18 +262,6 @@ p {
 .timeline-dot svg {
     width: 18px;
     height: 18px;
-}
-
-.timeline-role {
-    font-size: 14px;
-}
-
-.timeline-place {
-    font-size: 11px;
-}
-
-.timeline-date {
-    font-size: 12px;
 }
 
 .timeline-item:hover .timeline-dot {
@@ -234,7 +316,20 @@ p {
 
 @media (max-width: 800px) {
     section {
-        padding: 40px 22px;
+        padding: var(--header-safe-top) 22px 40px 86px;
+    }
+
+    .vertical-marquee {
+        width: 100px;
+        opacity: .42;
+    }
+
+    .vertical-marquee-track {
+        left: 16px;
+    }
+
+    .vertical-marquee span {
+        font-size: 66px;
     }
 
     .bio-card {
@@ -249,6 +344,19 @@ p {
 </head>
 
 <body>
+
+<div class="progress" id="progress"></div>
+
+<div class="vertical-marquee" aria-hidden="true">
+    <div class="vertical-marquee-track">
+        <span><strong>Présen</strong>tation</span>
+        <span><strong>Présen</strong>tation</span>
+        <span><strong>Présen</strong>tation</span>
+        <span><strong>Présen</strong>tation</span>
+        <span><strong>Présen</strong>tation</span>
+        <span><strong>Présen</strong>tation</span>
+    </div>
+</div>
 
 <section>
     <div class="bio-card">
@@ -281,6 +389,8 @@ p {
 </section>
 
 <script>
+gsap.registerPlugin(ScrollTrigger);
+
 const params = new URLSearchParams(window.location.search);
 const lang = params.get("lang") || "fr";
 
@@ -294,29 +404,20 @@ const content = {
         Cette dynamique exploratoire trouve un écho direct dans la création musicale. Guitariste et chanteur, j'ai parcouru les routes d'Europe au gré de plusieurs tournées, évoluant sur un spectre sonore qui s'étend des textures radicales du metal extrême jusqu'aux subtilités harmoniques du jazz.
         La lecture vient parfaire cet équilibre en nourrissant continuellement ma réflexion. Qu'il s'agisse d'optimiser une architecture de données, d'implémenter un workflow automatisé, d'expérimenter une nouvelle progression musicale ou de me plonger dans un ouvrage exigeant, mon moteur reste le même : l'exigence de la recherche, une curiosité insatiable et un engagement de tous les instants.`,
         timeline: [
-    ["2017-2019", "Licence Musicologie", "Université Rennes 2", "Major de spécialisation de recherche. Cycle d'étude dédié à l'analyse structurelle, à la méthodologie de l'écriture scientifique et à l'élaboration de protocoles de recherche rigoureux.", "music-2"],
-
-    ["2020-2021", "Licence Banque & Assurance", "Université Rennes 1", "Mention Assez Bien. Cursus opérationnel axé sur l'étude des mécanismes macro et micro-économiques, l'analyse financière et l'optimisation des structures organisationnelles.", "graduation-cap"],
-
-    ["2021", "Chargé de clientèle", "Crédit Agricole de Bruz", "Évaluation des profils et analyse des besoins en environnement bancaire. Étude des capacités de financement et implémentation de solutions sur mesure.", "landmark"],
-
-    ["2022", "Technicien E-fraude", "Crédit Agricole Bretagne (Siège)", "Analyse de données transactionnelles. Détection de signaux faibles, identification de schémas frauduleux (pattern recognition) et traitement d'anomalies systémiques. Aucun contentieux durant la période.", "shield-check"],
-
-    ["2022-2023", "Référent instruments - Professeur de Guitare", "School Music West", "Élaboration et application de protocoles pédagogiques. Suivi des performances individuelles et optimisation de la pratique instrumentale en environnement d'apprentissage collectif. 45 élèves.", "guitar"],
-
-    ["2023-2025", "Conseiller spécialisé en instruments de musique", "Sonowest", "Gestion opérationnelle et expertise technique en équipement. Analyse des indicateurs de performance, optimisation des flux et participation au déploiement de la stratégie d'entreprise. Réglage des instruments.", "store"],
-
-    ["2025-2027", "MSc Business Analytics", "Eugenia School", "Cycle axé sur l'ingénierie de la donnée et la business intelligence. Développement de compétences quantitatives, d'analyse statistique et de modélisation stratégique des processus.", "chart-no-axes-combined"],
-
-    ["2025-Aujourd’hui", "Consultant Technique & Business", "Centric Software", "Audit technique et conseil en systèmes d'information. Ingénierie des processus métiers, modélisation d'architectures logicielles, intégration de données et conduite du changement.", "briefcase-business"]
-]
+            ["2017-2019", "Licence Musicologie", "Université Rennes 2", "Major de spécialisation de recherche. Cycle d'étude dédié à l'analyse structurelle, à la méthodologie de l'écriture scientifique et à l'élaboration de protocoles de recherche rigoureux.", "music-2"],
+            ["2020-2021", "Licence Banque & Assurance", "Université Rennes 1", "Mention Assez Bien. Cursus opérationnel axé sur l'étude des mécanismes macro et micro-économiques, l'analyse financière et l'optimisation des structures organisationnelles.", "graduation-cap"],
+            ["2021", "Chargé de clientèle", "Crédit Agricole de Bruz", "Évaluation des profils et analyse des besoins en environnement bancaire. Étude des capacités de financement et implémentation de solutions sur mesure.", "landmark"],
+            ["2022", "Technicien E-fraude", "Crédit Agricole Bretagne (Siège)", "Analyse de données transactionnelles. Détection de signaux faibles, identification de schémas frauduleux (pattern recognition) et traitement d'anomalies systémiques. Aucun contentieux durant la période.", "shield-check"],
+            ["2022-2023", "Référent instruments - Professeur de Guitare", "School Music West", "Élaboration et application de protocoles pédagogiques. Suivi des performances individuelles et optimisation de la pratique instrumentale en environnement d'apprentissage collectif. 45 élèves.", "guitar"],
+            ["2023-2025", "Conseiller spécialisé en instruments de musique", "Sonowest", "Gestion opérationnelle et expertise technique en équipement. Analyse des indicateurs de performance, optimisation des flux et participation au déploiement de la stratégie d'entreprise. Réglage des instruments.", "store"],
+            ["2025-2027", "MSc Business Analytics", "Eugenia School", "Cycle axé sur l'ingénierie de la donnée et la business intelligence. Développement de compétences quantitatives, d'analyse statistique et de modélisation stratégique des processus.", "chart-no-axes-combined"],
+            ["2025-Aujourd’hui", "Consultant Technique & Business", "Centric Software", "Audit technique et conseil en systèmes d'information. Ingénierie des processus métiers, modélisation d'architectures logicielles, intégration de données et conduite du changement.", "briefcase-business"]
+        ]
     },
     en: {
         title: "About me",
         timelineTitle: "Timeline",
-        bio: `This portfolio is designed as an immersive universe where each section tells a part of my journey.
-
-Deeply attached to research, I approach data and artificial intelligence with an analytical and rigorous mindset. I enjoy breaking down complex systems, modeling information, and transforming abstract concepts into tangible and intelligent solutions.
+        bio: `This portfolio is designed as an immersive universe where each section tells a part of my journey. Deeply attached to research, I approach data and artificial intelligence with an analytical and rigorous mindset. I enjoy breaking down complex systems, modeling information, and transforming abstract concepts into tangible and intelligent solutions.
 
 This exploratory dynamic also extends directly into musical creation. As a guitarist and singer, I have travelled across Europe through several tours, evolving across a sonic spectrum ranging from the radical textures of extreme metal to the harmonic subtleties of jazz.
 
@@ -358,6 +459,27 @@ content[lang].timeline.forEach(item => {
 
 lucide.createIcons();
 
+const progress = document.getElementById("progress");
+
+ScrollTrigger.create({
+    start: 0,
+    end: "max",
+    onUpdate: self => {
+        progress.style.width = `${self.progress * 100}%`;
+    }
+});
+
+gsap.to(".vertical-marquee-track", {
+    yPercent: -55,
+    ease: "none",
+    scrollTrigger: {
+        trigger: "section",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.2
+    }
+});
+
 const floatingTooltip = document.getElementById("floatingTooltip");
 
 document.querySelectorAll(".timeline-item").forEach(item => {
@@ -386,6 +508,11 @@ gsap.to(".timeline-item", {
     ease: "power3.out",
     delay: 2.6
 });
+
+setTimeout(() => {
+    document.querySelector(".vertical-marquee").classList.add("reveal");
+}, 2000);
+
 </script>
 
 </body>
