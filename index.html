@@ -4,25 +4,39 @@
 <meta charset="UTF-8">
 <title>Portfolio - Briac Turquety</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
 <style>
+:root {
+    --black: #111111;
+    --white: #f9f9f7;
+    --ease: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
 html, body {
     margin: 0;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
     font-family: 'Playfair Display', serif;
     background: black;
     color: white;
+    overflow: hidden;
 }
 
+/* VIDEO SITE FINAL */
 video {
     position: fixed;
     inset: 0;
     width: 100vw;
     height: 100vh;
     object-fit: cover;
-    z-index: -2;
+    z-index: -3;
     opacity: 0.75;
 }
 
@@ -30,89 +44,186 @@ video {
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.25);
-    z-index: -1;
+    z-index: -2;
 }
 
-.language-popup,
-.entry {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 40px;
-    box-sizing: border-box;
+/* GRAIN GLOBAL */
+body::before {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    z-index: 30;
+    pointer-events: none;
+    opacity: .055;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
+    animation: grainMove .7s steps(2) infinite;
+    mix-blend-mode: soft-light;
 }
 
+@keyframes grainMove {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(-3%,2%); }
+    50% { transform: translate(2%,-3%); }
+    75% { transform: translate(3%,3%); }
+    100% { transform: translate(-2%,0); }
+}
+
+/* HUD */
+.hud {
+    position: fixed;
+    z-index: 12;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.58);
+    pointer-events: none;
+    opacity: 0;
+}
+
+.hud.tl { top: 24px; left: 28px; }
+.hud.tr { top: 24px; right: 28px; }
+.hud.bl { bottom: 24px; left: 28px; }
+.hud.br { bottom: 24px; right: 28px; }
+
+/* LANGUAGE */
 .language-popup {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: 10;
+    z-index: 40;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
 }
 
+.language-popup::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--white);
+    z-index: -1;
+}
+
 .language-popup h2 {
-    font-size: 38px;
-    margin-bottom: 25px;
+    color: var(--black);
+    font-size: clamp(34px, 5vw, 72px);
+    font-weight: 600;
+    margin: 0 0 34px;
+    letter-spacing: -.045em;
 }
 
-.language-popup button,
-.entry button {
-    margin: 10px;
-    padding: 13px 28px;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 15px;
-    background: white;
-    color: black;
+.language-popup button {
+    margin: 8px;
+    padding: 12px 26px;
     border-radius: 999px;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    border: 1px solid rgba(0,0,0,.16);
+    background: transparent;
+    color: var(--black);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform .45s var(--ease), background .45s ease;
 }
 
-.language-popup button:hover,
-.entry button:hover {
+
+.entry-card.ink-dissolving {
+    filter: url("#ink-bleed");
+}
+
+.falling-letter {
+    display: inline-block;
+    white-space: pre;
+    will-change: transform, opacity, filter;
+}
+
+.falling-letter.ink-letter {
+    animation: inkLetterVanish 2.9s cubic-bezier(.19, 1, .22, 1) forwards;
+}
+
+@keyframes inkLetterVanish {
+    0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+        filter: blur(0);
+    }
+
+    42% {
+        opacity: .86;
+        transform: translate3d(
+            calc(var(--side-shift) * .22),
+            calc(var(--fall-distance) * .12),
+            0
+        ) scale(1.015);
+        filter: blur(1.5px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate3d(
+            var(--side-shift),
+            var(--fall-distance),
+            0
+        ) scale(.96);
+        filter: blur(10px);
+    }
+}
+
+.language-popup button:hover {
     transform: translateY(-4px);
-    opacity: 0.85;
+    background: rgba(0,0,0,.06);
 }
 
+/* COUVERTURE EDITORIALE */
 .entry {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
     display: none;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30vh 40px 80px;
+    background: var(--white);
+    color: var(--black);
+    overflow: hidden;
 }
 
 .entry-card {
-    max-width: 800px;
-    padding: 48px;
-    background: rgba(0,0,0,0.32);
-    border: 1px solid rgba(255,255,255,0.14);
-    border-radius: 28px;
-    backdrop-filter: blur(12px);
-    transition: opacity 0.8s ease, transform 0.8s ease, border-color 0.8s ease;
+    width: min(65ch, 100%);
+    transform: translateY(0);
+    transition:
+        opacity 1.2s var(--ease),
+        transform 1.2s var(--ease),
+        filter 1.2s var(--ease);
 }
 
 .entry-card.disintegrating {
-    border-color: rgba(255,255,255,0);
-    background: rgba(0,0,0,0.12);
-    transform: scale(1.02);
+    transform: translateY(-20px);
+    filter: blur(2px);
 }
 
 h1 {
-    font-size: 46px;
-    margin: 0 0 22px;
+    font-size: clamp(38px, 5vw, 76px);
+    line-height: .95;
+    letter-spacing: -.045em;
+    margin: 0 0 34px;
     font-weight: 600;
+    text-align: center;
 }
 
 p {
-    font-size: 19px;
-    line-height: 1.7;
-    opacity: 0.9;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.75;
+    opacity: .9;
+    text-align: left;
 }
 
 .cursor {
     display: inline-block;
     margin-left: 2px;
-    animation: blink 0.8s infinite;
+    animation: blink .8s infinite;
 }
 
 @keyframes blink {
@@ -120,54 +231,21 @@ p {
     51%, 100% { opacity: 0; }
 }
 
+/* LETTRES QUI S’ÉVAPORENT */
 .falling-letter {
     display: inline-block;
     white-space: pre;
     will-change: transform, opacity, filter;
-
     animation-name: letterFall;
-    animation-duration: 6s;
-
-    animation-timing-function: cubic-bezier(0.2, 0.85, 0.3, 1);
+    animation-duration: 3.4s;
+    animation-timing-function: cubic-bezier(.19, 1, .22, 1);
     animation-fill-mode: forwards;
-}
-
-.floating-btn {
-    position: fixed;
-    bottom: 60px;
-    left: 50%;
-    z-index: 50;
-
-    padding: 14px 26px;
-    border-radius: 999px;
-    border: none;
-    cursor: pointer;
-
-    background: white;
-    color: black;
-    font-family: inherit;
-    font-size: 14px;
-
-    opacity: 0;
-
-    transform: translateX(-50%);
-
-    transition: opacity 0.4s ease, background 0.3s ease, box-shadow 0.3s ease;
-}
-
-.floating-btn.show {
-    opacity: 1;
-}
-
-.floating-btn:hover {
-    background: rgba(255,255,255,0.85);
-    box-shadow: 0 0 18px rgba(120,180,255,0.4);
 }
 
 @keyframes letterFall {
     from {
         opacity: 1;
-        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        transform: translate3d(0,0,0) rotate(0deg) scale(1);
         filter: blur(0);
     }
 
@@ -177,30 +255,102 @@ p {
             var(--side-shift),
             var(--fall-distance),
             0
-        ) rotate(var(--rotation)) scale(0.9);
-        filter: blur(6px);
+        ) rotate(var(--rotation)) scale(.96);
+        filter: blur(8px);
     }
 }
 
+/* BOUTON */
+.floating-btn {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    z-index: 50;
+    transform: translateX(-50%) translateY(12px);
+    padding: 14px 28px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,.16);
+    cursor: pointer;
+    background: transparent;
+    color: var(--black);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity .7s var(--ease),
+        transform .7s var(--ease),
+        background .35s ease;
+}
+
+.floating-btn.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.floating-btn:hover {
+    background: rgba(0,0,0,.06);
+}
+
+.entry {
+    opacity: 0;
+    transition: none;
+}
+
+/* FADE FINAL */
 #fade {
     position: fixed;
     inset: 0;
     background: black;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 1.2s ease;
-    z-index: 20;
+    transition: opacity 1.25s var(--ease);
+    z-index: 60;
 }
 </style>
 </head>
 
 <body>
 
+    <svg width="0" height="0" style="position:absolute">
+    <filter id="ink-bleed">
+        <feTurbulence
+            id="inkTurbulence"
+            type="fractalNoise"
+            baseFrequency="0.012"
+            numOctaves="3"
+            seed="8"
+            result="noise">
+        </feTurbulence>
+
+        <feDisplacementMap
+            id="inkDisplacement"
+            in="SourceGraphic"
+            in2="noise"
+            scale="0">
+        </feDisplacementMap>
+
+        <feGaussianBlur
+            id="inkBlur"
+            stdDeviation="0">
+        </feGaussianBlur>
+    </filter>
+</svg>
+    
+
 <video autoplay muted loop playsinline id="bg-video">
     <source src="disclaimer-video.mp4" type="video/mp4">
 </video>
 
 <div class="video-dark"></div>
+
+<div class="hud tl">0.00</div>
+<div class="hud tr">VIABILITY</div>
+<div class="hud bl">B.T / PORTFOLIO</div>
+<div class="hud br">48.1173°N · 1.6778°W</div>
 
 <audio id="music" loop preload="auto">
     <source src="music.mp3" type="audio/mpeg">
@@ -223,7 +373,7 @@ p {
     </div>
 </div>
 
-<button id="entryButton" class="floating-btn" onclick="enterPortfolio()"></button>  </div>
+<button id="entryButton" class="floating-btn" onclick="enterPortfolio()"></button>
 
 <div id="fade"></div>
 
@@ -245,12 +395,47 @@ const entryContent = {
     }
 };
 
+/* LENIS PRÊT POUR LE SITE */
+const lenis = new Lenis({
+    lerp: 0.07,
+    wheelMultiplier: 0.85,
+    smoothWheel: true
+});
+
+function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+}
+
+requestAnimationFrame(raf);
+
+/* VIDEO AUTOPLAY SAFE */
 const video = document.getElementById("bg-video");
 
 video.play().catch(() => {
     document.addEventListener("click", () => {
         video.play();
     }, { once: true });
+});
+
+/* INTRO */
+gsap.from(".language-popup h2", {
+    y: 28,
+    opacity: 0,
+    filter: "blur(8px)",
+    duration: 1.15,
+    ease: "power4.out",
+    delay: .2
+});
+
+gsap.from(".language-popup button", {
+    y: 18,
+    opacity: 0,
+    filter: "blur(6px)",
+    duration: .9,
+    stagger: .08,
+    ease: "power4.out",
+    delay: .45
 });
 
 function typeText(text, index = 0) {
@@ -285,28 +470,67 @@ function typeText(text, index = 0) {
     } else {
         keyboardSound.pause();
         keyboardSound.currentTime = 0;
-
         cursor.style.display = "none";
     }
 }
 
 function chooseLang(lang) {
     selectedLang = lang;
-
     clearTimeout(typingTimeout);
 
-    document.getElementById("languagePopup").style.display = "none";
-    document.getElementById("entry").style.display = "flex";
+    const popup = document.getElementById("languagePopup");
+    const entry = document.getElementById("entry");
+    const entryCard = document.getElementById("entryCard");
+    const entryButton = document.getElementById("entryButton");
 
     document.getElementById("entryTitle").innerText = entryContent[lang].title;
-
-    const entryButton = document.getElementById("entryButton");
+    document.getElementById("entryText").innerText = "";
     entryButton.innerText = entryContent[lang].button;
 
-    // 🔥 apparition immédiate du bouton
-    entryButton.classList.add("show");
+    entry.style.display = "flex";
+    entry.style.opacity = "0";
+    entryCard.style.opacity = "0";
+    entryCard.style.transform = "translateY(24px)";
+    entryCard.style.filter = "blur(8px)";
 
-    typeText(entryContent[lang].text);
+    const tl = gsap.timeline({
+        defaults: { ease: "power4.inOut" },
+        onComplete: () => {
+            popup.style.display = "none";
+            entry.style.opacity = "1";
+
+            setTimeout(() => {
+                entryButton.classList.add("show");
+                typeText(entryContent[lang].text);
+            }, 450);
+        }
+    });
+
+    tl.to(popup, {
+        opacity: 0,
+        y: -18,
+        filter: "blur(10px)",
+        duration: 0.75
+    }, 0);
+
+    tl.to(entry, {
+        opacity: 1,
+        duration: 0.75
+    }, 0.12);
+
+    tl.to(entryCard, {
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        duration: 1.05
+    }, 0.28);
+
+    tl.to(".hud", {
+        opacity: 1,
+        duration: 0.9,
+        stagger: 0.04,
+        ease: "power3.out"
+    }, 0.45);
 }
 
 function splitTextIntoFallingLetters(element) {
@@ -315,17 +539,15 @@ function splitTextIntoFallingLetters(element) {
 
     [...text].forEach((char, index) => {
         const span = document.createElement("span");
-        span.className = "falling-letter";
+        span.className = "falling-letter ink-letter";
         span.textContent = char === " " ? "\u00A0" : char;
 
-        const fallDistance = 260 + Math.random() * 220;
-        const sideShift = (Math.random() * 80 - 40);
-        const rotation = (Math.random() * 35 - 17);
-        const delay = Math.random() * 0.2 + index * 0.002;
+        const fallDistance = 28 + Math.random() * 62;
+        const sideShift = Math.random() * 46 - 23;
+        const delay = Math.random() * .18 + index * .004;
 
         span.style.setProperty("--fall-distance", fallDistance + "px");
         span.style.setProperty("--side-shift", sideShift + "px");
-        span.style.setProperty("--rotation", rotation + "deg");
         span.style.animationDelay = delay + "s";
 
         element.appendChild(span);
@@ -354,8 +576,16 @@ function enterPortfolio() {
         console.log("Lecture audio bloquée par le navigateur.");
     });
 
-    entryButton.style.opacity = "0";
-    entryButton.style.pointerEvents = "none";
+    gsap.to(entryButton, {
+        opacity: 0,
+        y: 14,
+        duration: .55,
+        ease: "power4.inOut",
+        onComplete: () => {
+            entryButton.style.pointerEvents = "none";
+        }
+    });
+
     cursor.style.display = "none";
 
     splitTextIntoFallingLetters(entryTitle);
@@ -363,9 +593,35 @@ function enterPortfolio() {
 
     entryCard.classList.add("disintegrating");
 
+    entryCard.classList.add("ink-dissolving");
+
+gsap.to("#inkDisplacement", {
+    attr: { scale: 72 },
+    duration: 2.6,
+    ease: "expo.inOut"
+});
+
+gsap.to("#inkBlur", {
+    attr: { stdDeviation: 5.5 },
+    duration: 2.4,
+    ease: "expo.inOut"
+});
+
+gsap.to("#inkTurbulence", {
+    attr: { baseFrequency: 0.038 },
+    duration: 2.8,
+    ease: "power4.inOut"
+});
+
+    gsap.to(".hud", {
+        opacity: 0,
+        duration: .9,
+        ease: "power4.inOut"
+    });
+
     setTimeout(() => {
         fade.style.opacity = "1";
-    }, 2300);
+    }, 2100);
 
     setTimeout(() => {
         document.getElementById("entry").style.display = "none";
@@ -384,9 +640,9 @@ function enterPortfolio() {
 
         setTimeout(() => {
             fade.style.opacity = "0";
-        }, 500);
+        }, 550);
 
-    }, 3200);
+    }, 3150);
 }
 </script>
 
