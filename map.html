@@ -493,6 +493,20 @@ nav {
     }
 }
 
+@media (max-width: 900px) {
+    .global-noise {
+        display: none;
+    }
+
+    .site-header,
+    .music-player,
+    .lang-switch button,
+    .nav-btn {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
 .music-player {
     transition:
         transform .85s cubic-bezier(.22,1,.36,1),
@@ -621,6 +635,10 @@ nav {
 <script>
 let lang = "fr";
 
+const isMobile = window.innerWidth <= 900;
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const shouldReduceEffects = isMobile || prefersReducedMotion;
+
 const navContent = {
     fr: {
         about: "Présentation",
@@ -683,7 +701,7 @@ function loadPage(page) {
                 });
             });
         };
-    }, 420);
+    }, shouldReduceEffects ? 120 : 420);
 }
 
 function setLang(l) {
@@ -736,34 +754,33 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
 
 
 
-/* MAGNETIC HOVER */
-document.querySelectorAll(".magnetic").forEach(el => {
-    el.addEventListener("mousemove", e => {
-        const rect = el.getBoundingClientRect();
+/* MAGNETIC HOVER - disabled on mobile / reduced motion */
+if (!shouldReduceEffects) {
+    document.querySelectorAll(".magnetic").forEach(el => {
+        el.addEventListener("mousemove", e => {
+            const rect = el.getBoundingClientRect();
 
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-        el.style.setProperty("--mx", `${x}px`);
-        el.style.setProperty("--my", `${y}px`);
+            gsap.to(el, {
+                x: (x - rect.width / 2) * 0.18,
+                y: (y - rect.height / 2) * 0.22,
+                duration: 0.55,
+                ease: "power3.out"
+            });
+        });
 
-        gsap.to(el, {
-            x: (x - rect.width / 2) * 0.18,
-            y: (y - rect.height / 2) * 0.22,
-            duration: 0.55,
-            ease: "power3.out"
+        el.addEventListener("mouseleave", () => {
+            gsap.to(el, {
+                x: 0,
+                y: 0,
+                duration: 0.7,
+                ease: "power3.out"
+            });
         });
     });
-
-    el.addEventListener("mouseleave", () => {
-        gsap.to(el, {
-            x: 0,
-            y: 0,
-            duration: 0.9,
-            ease: "elastic.out(1, 0.38)"
-        });
-    });
-});
+}
 
 /* HEADER HIDE / SHOW ON IFRAME SCROLL */
 const siteHeader = document.querySelector(".site-header");
