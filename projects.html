@@ -8,6 +8,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
 <style>
 :root {
     --header-safe-top: 120px;
@@ -306,9 +315,221 @@ h1 {
 }
 
 /* PROJECTS */
+
+.synapse-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #000b18;
+}
+
+.project-synapse .project-overlay {
+    background:
+        radial-gradient(circle at 65% 25%, rgba(0,243,255,.18), transparent 36%),
+        linear-gradient(to top, rgba(0,6,14,.96), rgba(0,11,24,.54), rgba(0,0,0,.08));
+}
+
+.project-synapse:hover .synapse-canvas {
+    filter: brightness(1.12) contrast(1.08);
+}
+
+.project-discogs {
+    background:
+        radial-gradient(circle at 76% 36%, rgba(160,112,62,.16), transparent 38%),
+        radial-gradient(circle at 12% 88%, rgba(255,255,255,.035), transparent 30%),
+        rgba(17,14,10,.72);
+    border-color: rgba(255,255,255,.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.project-discogs::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    opacity: .025;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.9) 0px,
+        rgba(255,255,255,.9) 1px,
+        transparent 1px,
+        transparent 5px
+    );
+}
+
+.project-discogs:hover {
+    border-color: rgba(229,192,123,.34);
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.52),
+        inset 0 0 70px rgba(229,192,123,.075);
+}
+
+.project-discogs .project-overlay {
+    z-index: 1;
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.62),
+            rgba(17,14,10,.12),
+            rgba(0,0,0,0)
+        );
+}
+
+.project-discogs .project-noise {
+    z-index: 3;
+    opacity: .08;
+}
+
+.discogs-vinyl {
+    position: absolute;
+    right: -95px;
+    top: -18px;
+    width: 430px;
+    height: 430px;
+    z-index: 2;
+    opacity: .95;
+    transform-origin: center;
+    pointer-events: none;
+    filter:
+        drop-shadow(0 0 24px rgba(229,192,123,.22))
+        drop-shadow(0 0 54px rgba(229,192,123,.12));
+}
+
+.discogs-vinyl svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.discogs-vinyl circle {
+    fill: none;
+    stroke: rgba(234,234,234,.32);
+    stroke-width: .85;
+}
+
+.discogs-vinyl .data-groove {
+    stroke: rgba(229,192,123,.95);
+    stroke-width: 1.35;
+    stroke-dasharray: 3 9;
+}
+
+.discogs-vinyl .vinyl-label {
+    fill: rgba(229,192,123,.12);
+    stroke: rgba(234,234,234,.38);
+}
+
+.discogs-content {
+    position: relative;
+    z-index: 5;
+}
+
+.discogs-kicker,
+.discogs-tags span {
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+}
+
+.discogs-title,
+.discogs-content p {
+    font-family: 'Playfair Display', serif;
+    color: #EAEAEA;
+}
+
+.discogs-title {
+    color: #f0d79a;
+    letter-spacing: -.035em;
+    text-shadow: 0 0 18px rgba(229,192,123,.16);
+}
+
+.discogs-tags span {
+    min-width: 0;
+    color: rgba(255,255,255,.88);
+}
+
+.discogs-logo {
+    position: absolute;
+    right: 22px;
+    bottom: 20px;
+    width: 78px;
+    z-index: 6;
+    opacity: .9;
+    filter:
+        drop-shadow(0 0 8px rgba(255,255,255,.18))
+        drop-shadow(0 18px 22px rgba(0,0,0,.38));
+    transition:
+        transform .8s cubic-bezier(.19,1,.22,1),
+        opacity .45s ease,
+        filter .45s ease;
+}
+
+.project-discogs:hover .discogs-logo {
+    transform: translateY(-5px) rotate(-2deg) scale(1.05);
+    opacity: 1;
+    filter:
+        drop-shadow(0 0 10px rgba(255,255,255,.28))
+        drop-shadow(0 0 24px rgba(229,192,123,.15));
+}
+
+.mirakl-canvas,
+.atlas-canvas,
+.zigzag-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.mirakl-canvas,
+.atlas-canvas,
+.zigzag-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.project-mirakl .project-overlay,
+.project-atlas .project-overlay,
+.project-zigzag .project-overlay {
+    background:
+        linear-gradient(to top, rgba(0,0,0,.82), rgba(0,0,0,.28), rgba(0,0,0,.04));
+}
+
+.project-mirakl:hover,
+.project-atlas:hover,
+.project-zigzag:hover {
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.48),
+        inset 0 0 70px rgba(255,255,255,.08);
+}
+
+.project-character {
+    position: absolute;
+    right: 18px;
+    bottom: 10px;
+    width: 94px;
+    z-index: 4;
+    pointer-events: none;
+    opacity: .95;
+    filter:
+        drop-shadow(0 0 8px rgba(255,255,255,.35))
+        drop-shadow(0 20px 24px rgba(0,0,0,.45));
+    transition:
+        transform .9s cubic-bezier(.19,1,.22,1),
+        opacity .45s ease,
+        filter .45s ease;
+}
+
+.project-zigzag:hover .project-character {
+    transform: translateY(-9px) rotate(5deg) scale(1.08);
+    opacity: 1;
+}
+
+
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(300px, 430px));
+    grid-template-columns: repeat(2, minmax(300px, 460px));
     gap: 28px;
     justify-content: center;
     padding: 0 40px 0 15vw;
@@ -318,79 +539,75 @@ h1 {
 .project-card {
     position: relative;
     display: block;
-    min-height: 315px;
-    padding: 30px;
-    border-radius: 28px;
-    background:
-        linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
-        rgba(0,0,0,0.48);
-    border: 1px solid rgba(255,255,255,0.14);
-    backdrop-filter: blur(16px) saturate(130%);
-    -webkit-backdrop-filter: blur(16px) saturate(130%);
+    min-height: 390px;
+    border-radius: 30px;
+    overflow: hidden;
     color: white;
     text-decoration: none;
-    overflow: hidden;
     opacity: 0;
     transform: translateY(34px) scale(.985);
     filter: blur(9px);
-    transition:
-        transform .65s cubic-bezier(.22,1,.36,1),
-        background .55s ease,
-        box-shadow .55s ease,
-        border-color .55s ease;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.48);
+    box-shadow: 0 26px 80px rgba(0,0,0,.36);
 }
 
-.project-card::before {
-    content: "";
+.project-bg,
+.project-overlay,
+.project-noise,
+.project-scanlines {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(125,211,252,.20), transparent 36%);
-    opacity: 0;
-    transition: opacity .45s ease;
 }
 
-.project-card::after {
-    content: "";
-    position: absolute;
-    left: 28px;
-    right: 28px;
-    bottom: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(125,211,252,.58), transparent);
-    opacity: 0;
-    transition: opacity .45s ease;
+.project-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(.42) contrast(1.18) brightness(.58);
+    transform: scale(1.02);
+    transition: transform 1.45s cubic-bezier(.19,1,.22,1), filter 1.2s ease;
 }
 
-.project-card:hover {
-    transform: translateY(-12px) scale(1.018);
-    background:
-        linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.04)),
-        rgba(0,0,0,.54);
-    border-color: rgba(125,211,252,.35);
-    box-shadow:
-        0 28px 70px rgba(0,0,0,.42),
-        0 0 26px rgba(125,211,252,.13);
+.project-overlay {
+    z-index: 1;
+    background: linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,.52), rgba(0,0,0,.16));
+    transition: opacity .8s ease;
 }
 
-.project-card:hover::before,
-.project-card:hover::after {
-    opacity: 1;
-}
-
-.project-card h2,
-.project-card p,
-.project-card .tags,
-.project-card .project-link {
-    position: relative;
+.project-noise {
     z-index: 2;
+    opacity: .12;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.project-content {
+    position: relative;
+    z-index: 3;
+    min-height: 390px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.project-kicker {
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    opacity: .62;
+    margin-bottom: 14px;
 }
 
 .project-card h2 {
     display: flex;
     align-items: center;
     gap: 11px;
-    margin: 0 0 18px;
-    font-size: 27px;
+    margin: 0 0 16px;
+    font-size: 32px;
+    transition: transform .8s cubic-bezier(.19,1,.22,1);
 }
 
 .project-card svg {
@@ -399,50 +616,393 @@ h1 {
 }
 
 .project-card p {
-    line-height: 1.6;
-    opacity: 0.86;
-    font-size: 15.5px;
-    text-align: justify;
-    text-justify: inter-word;
+    line-height: 1.58;
+    opacity: .86;
+    font-size: 15px;
+    text-align: left;
+    max-width: 92%;
 }
 
 .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 24px;
+    margin-top: 22px;
 }
 
 .tags span {
-    font-size: 12px;
+    font-size: 11px;
     padding: 6px 10px;
     border-radius: 999px;
-    background: rgba(255,255,255,0.12);
+    background: rgba(255,255,255,.12);
     border: 1px solid rgba(255,255,255,.08);
 }
 
 .project-link {
     display: inline-block;
-    margin-top: 24px;
+    width: fit-content;
+    margin-top: 22px;
     font-size: 14px;
-    opacity: 0.9;
+    opacity: .9;
     border-bottom: 1px solid rgba(255,255,255,.72);
 }
 
-.project-character {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    width: 78px;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0.9;
-    transition: transform .6s cubic-bezier(.22,1,.36,1), opacity .4s ease;
+.project-card:hover .project-bg {
+    transform: scale(1.08);
+    filter: saturate(.55) contrast(1.25) brightness(.72);
 }
 
-.project-card:hover .project-character {
-    transform: scale(1.14) rotate(5deg) translateY(-5px);
-    opacity: 1;
+.project-card:hover h2 {
+    transform: translateX(10px);
+}
+
+.project-synapse .project-overlay {
+    background:
+        radial-gradient(circle at 70% 18%, rgba(125,211,252,.22), transparent 34%),
+        linear-gradient(to top, rgba(0,11,24,.94), rgba(0,11,24,.56), rgba(0,0,0,.18));
+}
+
+
+
+.project-scanlines {
+    z-index: 4;
+    pointer-events: none;
+    opacity: .035;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.18) 0px,
+        rgba(255,255,255,.18) 1px,
+        transparent 1px,
+        transparent 5px
+    );
+}
+
+.project-mirakl .project-overlay {
+    background:
+        radial-gradient(circle at 82% 20%, rgba(167,139,250,.22), transparent 36%),
+        linear-gradient(to top, rgba(6,8,18,.92), rgba(8,12,26,.48), rgba(0,0,0,.12));
+}
+
+.glass-content {
+    margin: 24px;
+    min-height: calc(390px - 48px);
+    padding: 26px;
+    border-radius: 24px;
+    background: rgba(0,0,0,.24);
+    border: 1px solid rgba(255,255,255,.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.project-atlas .project-overlay {
+    background:
+        radial-gradient(circle at 74% 34%, rgba(255,92,36,.22), transparent 34%),
+        linear-gradient(to top, rgba(18,5,2,.94), rgba(10,18,14,.54), rgba(0,0,0,.16));
+}
+
+.project-atlas:hover {
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.48),
+        inset 0 0 80px rgba(255,92,36,.16);
+}
+
+.project-zigzag .project-overlay {
+    background:
+        radial-gradient(circle at 25% 22%, rgba(91,120,74,.22), transparent 34%),
+        radial-gradient(circle at 78% 72%, rgba(92,54,128,.24), transparent 38%),
+        linear-gradient(to top, rgba(8,8,10,.94), rgba(16,12,22,.54), rgba(0,0,0,.16));
+}
+
+.project-bg-svg {
+    display: block;
+    overflow: hidden;
+    transform: scale(1.02);
+    transition: transform 1.45s cubic-bezier(.19,1,.22,1), filter 1.2s ease;
+}
+
+.project-bg-svg svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.project-card:hover .project-bg-svg {
+    transform: scale(1.08);
+    filter: saturate(.75) contrast(1.25) brightness(.9);
+}
+
+.mirakl-card {
+    background: rgba(10, 15, 25, .4);
+    border: 1px solid rgba(0, 243, 255, .12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+.mirakl-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: .45;
+    background-image:
+        linear-gradient(rgba(0,243,255,.09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,243,255,.09) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: radial-gradient(circle at 58% 38%, black 0%, transparent 72%);
+    -webkit-mask-image: radial-gradient(circle at 58% 38%, black 0%, transparent 72%);
+}
+
+.mirakl-overlay {
+    background:
+        radial-gradient(circle at 72% 24%, rgba(0,243,255,.18), transparent 34%),
+        radial-gradient(circle at 24% 80%, rgba(125,211,252,.09), transparent 34%),
+        linear-gradient(to top, rgba(4,8,15,.94), rgba(8,14,28,.44), rgba(0,0,0,.08));
+}
+
+.mirakl-content {
+    font-family: Inter, Arial, sans-serif;
+    text-shadow: 0 2px 18px rgba(0,0,0,.62);
+}
+
+.mirakl-content h2,
+.mirakl-content p {
+    font-family: 'Playfair Display', serif;
+}
+
+.mirakl-card:hover {
+    box-shadow:
+        0 34px 100px rgba(0,0,0,.56),
+        inset 0 0 90px rgba(0,243,255,.10);
+    border-color: rgba(0,243,255,.24);
+}
+
+.mirakl-architecture {
+    position: absolute;
+    right: 34px;
+    top: 40px;
+    width: 210px;
+    height: 210px;
+    z-index: 1;
+    transform-style: preserve-3d;
+    transform: rotateX(58deg) rotateZ(-42deg);
+    pointer-events: none;
+}
+
+.mirakl-layer {
+    position: absolute;
+    left: 38px;
+    top: 70px;
+    width: 150px;
+    height: 82px;
+    border-radius: 18px;
+    background:
+        linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.035));
+    border: 1px solid rgba(0,243,255,.24);
+    box-shadow:
+        0 18px 38px rgba(0,0,0,.34),
+        inset 0 0 28px rgba(0,243,255,.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transform-style: preserve-3d;
+}
+
+.mirakl-layer span {
+    position: absolute;
+    left: 14px;
+    top: 12px;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: .18em;
+    color: rgba(234,234,234,.72);
+}
+
+.mirakl-layer i {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 16px;
+    height: 24px;
+    border-radius: 999px;
+    background:
+        linear-gradient(90deg,
+            rgba(0,243,255,.18),
+            rgba(255,255,255,.7),
+            rgba(0,243,255,.16));
+    opacity: .62;
+}
+
+.layer-finance { transform: translateZ(0px); }
+.layer-ops { transform: translate3d(-10px, 10px, 34px); }
+.layer-marketing { transform: translate3d(-20px, 20px, 68px); }
+.layer-ecosystem { transform: translate3d(-30px, 30px, 102px); }
+
+.mirakl-scanline {
+    position: absolute;
+    left: 0;
+    top: -20%;
+    width: 100%;
+    height: 2px;
+    z-index: 4;
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(0,243,255,.92), transparent);
+    box-shadow: 0 0 22px rgba(0,243,255,.7);
+    mix-blend-mode: screen;
+}
+
+.mirakl-tags span {
+    font-family: Inter, Arial, sans-serif;
+    letter-spacing: .05em;
+    transition:
+        background .35s ease,
+        border-color .35s ease,
+        box-shadow .35s ease,
+        color .35s ease;
+}
+
+.mirakl-tags span.is-lit {
+    color: #fff;
+    background: rgba(0,243,255,.15);
+    border-color: rgba(0,243,255,.36);
+    box-shadow: 0 0 14px rgba(0,243,255,.16);
+}
+
+.zigzag-card {
+    background:
+        radial-gradient(circle at 28% 28%, rgba(10,28,16,.86), transparent 42%),
+        radial-gradient(circle at 76% 68%, rgba(26,11,38,.92), transparent 46%),
+        #020202;
+    border: 1px solid rgba(255,255,255,.13);
+    transform-origin: center;
+}
+
+.zigzag-liquid-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: .9;
+    mix-blend-mode: screen;
+}
+
+.zigzag-overlay {
+    background:
+        radial-gradient(circle at 66% 42%, rgba(255,122,48,.08), transparent 36%),
+        linear-gradient(to top, rgba(0,0,0,.84), rgba(0,0,0,.28), rgba(0,0,0,.06));
+}
+
+.zigzag-grain {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: .22;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23grain)' opacity='.9'/%3E%3C/svg%3E");
+}
+
+.zigzag-content {
+    text-shadow: 0 2px 22px rgba(0,0,0,.72);
+}
+
+.zigzag-content .project-kicker,
+.zigzag-tags span {
+    font-family: "Courier New", monospace;
+    letter-spacing: .12em;
+}
+
+.zigzag-content em {
+    font-style: italic;
+    color: rgba(255,255,255,.96);
+}
+
+.zigzag-tags span {
+    background: rgba(255,255,255,.105);
+    border-color: rgba(255,255,255,.13);
+}
+
+.zigzag-card:hover {
+    box-shadow:
+        0 34px 95px rgba(0,0,0,.58),
+        inset 0 0 84px rgba(255,122,48,.12);
+}
+
+.zigzag-character {
+    right: 18px;
+    bottom: 12px;
+    width: 94px;
+    z-index: 5;
+    opacity: .96;
+    filter:
+        drop-shadow(0 0 8px rgba(255,255,255,.34))
+        drop-shadow(0 20px 24px rgba(0,0,0,.48));
+}
+
+.zigzag-card:hover .zigzag-character {
+    transform: translateY(-10px) rotate(6deg) scale(1.08);
+}
+
+@media (max-width: 900px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        margin: auto;
+        padding-left: 82px;
+        padding-right: 18px;
+    }
+
+    .project-card {
+        min-height: 50vh;
+        border-radius: 24px;
+    }
+
+    .project-content {
+        min-height: 50vh;
+        padding: 24px;
+    }
+
+    .glass-content {
+        margin: 16px;
+        min-height: calc(50vh - 32px);
+        padding: 22px;
+    }
+
+    .project-card h2 {
+        font-size: 25px;
+    }
+
+    .project-card p {
+        font-size: 14.5px;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .projects-grid {
+        padding-left: 64px;
+        padding-right: 14px;
+    }
+
+    .project-card {
+        min-height: 54vh;
+        border-radius: 22px;
+    }
+
+    .project-content {
+        min-height: 54vh;
+        padding: 20px;
+    }
+
+    .glass-content {
+        margin: 12px;
+        min-height: calc(54vh - 24px);
+        padding: 18px;
+    }
+
+    .tags span {
+        font-size: 11px;
+    }
 }
 
 /* PDF */
@@ -591,6 +1151,113 @@ h1 {
     height: 20px;
 }
 
+.atlas-pred-card {
+    background: rgba(20,20,20,.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.atlas-pred-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #050302;
+}
+
+.atlas-pred-heat {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(circle at 72% 34%, rgba(255,92,36,.28), transparent 34%),
+        radial-gradient(circle at 24% 72%, rgba(120,24,12,.26), transparent 36%),
+        radial-gradient(circle at 52% 48%, rgba(255,146,70,.10), transparent 42%);
+    filter: blur(10px);
+    opacity: .82;
+    transition: opacity .7s ease, filter .7s ease;
+}
+
+.atlas-pred-overlay {
+    background:
+        radial-gradient(circle at 72% 34%, rgba(255,92,36,.16), transparent 32%),
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.92) 0%,
+            rgba(0,0,0,.42) 48%,
+            rgba(0,0,0,.08) 100%
+        );
+}
+
+.atlas-pred-card:hover {
+    box-shadow:
+        0 34px 100px rgba(0,0,0,.56),
+        inset 0 0 90px rgba(255,98,36,.14);
+}
+
+.atlas-pred-card:hover .atlas-pred-heat {
+    opacity: 1;
+    filter: blur(7px);
+}
+
+.atlas-pred-content {
+    position: relative;
+    z-index: 3;
+
+    padding: 34px;
+    min-height: 390px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    background: transparent;
+    border: none;
+    backdrop-filter: none;
+
+    text-shadow:
+        0 2px 14px rgba(0,0,0,.55);
+}
+
+
+.atlas-pred-icon {
+    position: absolute;
+    right: 24px;
+    bottom: 22px;
+    width: 74px;
+    height: 74px;
+    z-index: 4;
+    opacity: .92;
+    pointer-events: none;
+
+    filter:
+        drop-shadow(0 0 10px rgba(255,255,255,.26))
+        drop-shadow(0 0 28px rgba(255,92,36,.32));
+
+    transition:
+        transform .9s cubic-bezier(.19,1,.22,1),
+        opacity .45s ease,
+        filter .45s ease;
+}
+
+.atlas-pred-icon path,
+.atlas-pred-icon line {
+    vector-effect: non-scaling-stroke;
+}
+
+.atlas-pred-card:hover .atlas-pred-icon {
+    transform: translateY(-7px) rotate(-3deg) scale(1.08);
+    opacity: 1;
+
+    filter:
+        drop-shadow(0 0 14px rgba(255,255,255,.38))
+        drop-shadow(0 0 36px rgba(255,92,36,.42));
+}
+
+.atlas-pred-card:hover .atlas-pred-icon {
+    transform: translateY(-6px) rotate(-4deg) scale(1.08);
+    opacity: 1;
+}
+
 @media (max-width: 900px) {
     main {
         padding-top: var(--header-safe-top);
@@ -733,6 +1400,214 @@ h1 {
     }
 }
 
+/* =========================================================
+   DISCOGS — FINAL OVERRIDE
+   À garder APRÈS les styles génériques .project-card / .project-card svg.
+   Problème corrigé :
+   1) .project-card réécrivait le background de .project-discogs.
+   2) .project-card svg forçait le SVG du vinyle à 23x23px.
+   ========================================================= */
+
+.project-card.project-discogs.discogs-card {
+    isolation: isolate;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 86% 28%, rgba(229,192,123,.20), transparent 34%),
+        radial-gradient(circle at 18% 88%, rgba(255,255,255,.045), transparent 32%),
+        linear-gradient(135deg, rgba(28,22,14,.92), rgba(8,7,6,.96) 58%, rgba(2,2,2,.98)) !important;
+    border-color: rgba(255,255,255,.13);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.project-card.project-discogs.discogs-card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 72% 34%, rgba(229,192,123,.12), transparent 34%),
+        radial-gradient(circle at 48% 110%, rgba(0,0,0,.72), transparent 46%);
+    opacity: .9;
+}
+
+.project-card.project-discogs.discogs-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    opacity: .032;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.85) 0px,
+        rgba(255,255,255,.85) 1px,
+        transparent 1px,
+        transparent 5px
+    );
+}
+
+.project-card.project-discogs.discogs-card:hover {
+    border-color: rgba(229,192,123,.38);
+    box-shadow:
+        0 34px 96px rgba(0,0,0,.58),
+        inset 0 0 82px rgba(229,192,123,.09);
+}
+
+.project-card.project-discogs.discogs-card .project-overlay {
+    z-index: 2;
+    background:
+        linear-gradient(
+            to right,
+            rgba(0,0,0,.72) 0%,
+            rgba(0,0,0,.46) 46%,
+            rgba(0,0,0,.16) 100%
+        ),
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.66),
+            rgba(17,14,10,.12),
+            rgba(0,0,0,0)
+        );
+}
+
+.project-card.project-discogs.discogs-card .project-noise {
+    z-index: 5;
+    opacity: .075;
+    mix-blend-mode: overlay;
+}
+
+/* Grand vinyle data-art visible à droite */
+.project-card.project-discogs.discogs-card .discogs-vinyl {
+    position: absolute;
+    right: -118px;
+    top: -54px;
+    width: 500px;
+    height: 500px;
+    z-index: 1;
+    opacity: .9;
+    transform-origin: 50% 50%;
+    pointer-events: none;
+    filter:
+        drop-shadow(0 0 22px rgba(229,192,123,.22))
+        drop-shadow(0 0 58px rgba(229,192,123,.11));
+}
+
+/* IMPORTANT : annule le .project-card svg { width:23px; height:23px; } */
+.project-card.project-discogs.discogs-card .discogs-vinyl > svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    overflow: visible;
+}
+
+/* Sillons du vinyle */
+.project-card.project-discogs.discogs-card .discogs-vinyl circle {
+    fill: none;
+    stroke: rgba(234,234,234,.22);
+    stroke-width: .72;
+}
+
+.project-card.project-discogs.discogs-card .discogs-vinyl .data-groove {
+    stroke: rgba(229,192,123,.9);
+    stroke-width: 1.25;
+    stroke-dasharray: 3 9;
+}
+
+.project-card.project-discogs.discogs-card .discogs-vinyl .vinyl-label {
+    fill: rgba(229,192,123,.11);
+    stroke: rgba(234,234,234,.32);
+    stroke-width: .9;
+}
+
+/* Contenu devant le vinyle */
+.project-card.project-discogs.discogs-card .discogs-content {
+    position: relative;
+    z-index: 7;
+    text-shadow: 0 2px 20px rgba(0,0,0,.72);
+}
+
+.project-card.project-discogs.discogs-card .discogs-kicker,
+.project-card.project-discogs.discogs-card .discogs-tags span {
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+}
+
+.project-card.project-discogs.discogs-card .discogs-title,
+.project-card.project-discogs.discogs-card .discogs-content p {
+    font-family: 'Playfair Display', serif;
+    color: #EAEAEA;
+}
+
+.project-card.project-discogs.discogs-card .discogs-title {
+    color: #f0d79a;
+    letter-spacing: -.035em;
+    text-shadow:
+        0 0 16px rgba(229,192,123,.18),
+        0 2px 20px rgba(0,0,0,.7);
+}
+
+/* IMPORTANT : on garde l'icône Lucide du titre à sa taille normale */
+.project-card.project-discogs.discogs-card .discogs-title svg {
+    width: 23px !important;
+    height: 23px !important;
+}
+
+.project-card.project-discogs.discogs-card .discogs-tags span {
+    min-width: 0;
+    color: rgba(255,255,255,.9);
+    background: rgba(255,255,255,.105);
+    border-color: rgba(255,255,255,.11);
+    transition:
+        background .35s ease,
+        border-color .35s ease,
+        color .35s ease,
+        box-shadow .35s ease;
+}
+
+.project-card.project-discogs.discogs-card:hover .discogs-tags span {
+    background: rgba(229,192,123,.12);
+    border-color: rgba(229,192,123,.20);
+    box-shadow: 0 0 16px rgba(229,192,123,.08);
+}
+
+/* Logo Discogs comme le perso Zig-Zag : élément bas droit, lisible */
+.project-card.project-discogs.discogs-card .discogs-logo {
+    position: absolute;
+    right: 20px;
+    bottom: 18px;
+    width: 84px;
+    z-index: 8;
+    opacity: .9;
+    padding: 7px 9px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    filter:
+        drop-shadow(0 0 8px rgba(255,255,255,.18))
+        drop-shadow(0 18px 22px rgba(0,0,0,.38));
+    transition:
+        transform .8s cubic-bezier(.19,1,.22,1),
+        opacity .45s ease,
+        filter .45s ease,
+        background .45s ease,
+        border-color .45s ease;
+}
+
+.project-card.project-discogs.discogs-card:hover .discogs-logo {
+    transform: translateY(-5px) rotate(-2deg) scale(1.05);
+    opacity: 1;
+    background: rgba(229,192,123,.08);
+    border-color: rgba(229,192,123,.18);
+    filter:
+        drop-shadow(0 0 10px rgba(255,255,255,.28))
+        drop-shadow(0 0 24px rgba(229,192,123,.18));
+}
+
 </style>
 </head>
 
@@ -765,76 +1640,237 @@ h1 {
 
     <div class="skills-marquee">
         <div class="skills-track">
-            <div class="skill-pill"><img src="assets/logos/python.png"><span>Python</span></div>
-            <div class="skill-pill"><img src="assets/logos/google-sheets.png"><span>Google Sheets</span></div>
-            <div class="skill-pill"><img src="assets/logos/make.png"><span>Make</span></div>
-            <div class="skill-pill"><img src="assets/logos/rag.png"><span>RAG</span></div>
-            <div class="skill-pill"><img src="assets/logos/powerbi.png"><span>Power BI</span></div>
-            <div class="skill-pill"><img src="assets/logos/tableau.png"><span>Tableau</span></div>
-            <div class="skill-pill"><img src="assets/logos/dataiku.png"><span>Dataiku</span></div>
-            <div class="skill-pill"><img src="assets/logos/api.png"><span>API</span></div>
-            <div class="skill-pill"><img src="assets/logos/llm.png"><span>AI LLM</span></div>
-            <div class="skill-pill"><img src="assets/logos/excel.png"><span>Excel</span></div>
-            <div class="skill-pill"><img src="assets/logos/notion.png"><span>Notion</span></div>
-            <div class="skill-pill"><img src="assets/logos/github.png"><span>GitHub</span></div>
-            <div class="skill-pill"><img src="assets/logos/sql.png"><span>SQL</span></div>
-            <div class="skill-pill"><img src="assets/logos/machine-learning.png"><span>Machine Learning</span></div>
-            <div class="skill-pill"><img src="assets/logos/n8n.png"><span>n8n</span></div>
-            <div class="skill-pill"><img src="assets/logos/dust.png"><span>Dust</span></div>
-            <div class="skill-pill"><img src="assets/logos/scraping.png"><span>Scraping</span></div>
-            <div class="skill-pill"><img src="assets/logos/beautifulsoup.png"><span>BeautifulSoup</span></div>
-            <div class="skill-pill"><img src="assets/logos/cubase.png"><span>Cubase</span></div>
+            <div class="skill-pill"><img src="assets/logos/python.png" loading="lazy" decoding="async" alt=""><span>Python</span></div>
+            <div class="skill-pill"><img src="assets/logos/google-sheets.png" loading="lazy" decoding="async" alt=""><span>Google Sheets</span></div>
+            <div class="skill-pill"><img src="assets/logos/make.png" loading="lazy" decoding="async" alt=""><span>Make</span></div>
+            <div class="skill-pill"><img src="assets/logos/rag.png" loading="lazy" decoding="async" alt=""><span>RAG</span></div>
+            <div class="skill-pill"><img src="assets/logos/powerbi.png" loading="lazy" decoding="async" alt=""><span>Power BI</span></div>
+            <div class="skill-pill"><img src="assets/logos/tableau.png" loading="lazy" decoding="async" alt=""><span>Tableau</span></div>
+            <div class="skill-pill"><img src="assets/logos/dataiku.png" loading="lazy" decoding="async" alt=""><span>Dataiku</span></div>
+            <div class="skill-pill"><img src="assets/logos/api.png" loading="lazy" decoding="async" alt=""><span>API</span></div>
+            <div class="skill-pill"><img src="assets/logos/llm.png" loading="lazy" decoding="async" alt=""><span>AI LLM</span></div>
+            <div class="skill-pill"><img src="assets/logos/excel.png" loading="lazy" decoding="async" alt=""><span>Excel</span></div>
+            <div class="skill-pill"><img src="assets/logos/notion.png" loading="lazy" decoding="async" alt=""><span>Notion</span></div>
+            <div class="skill-pill"><img src="assets/logos/github.png" loading="lazy" decoding="async" alt=""><span>GitHub</span></div>
+            <div class="skill-pill"><img src="assets/logos/sql.png" loading="lazy" decoding="async" alt=""><span>SQL</span></div>
+            <div class="skill-pill"><img src="assets/logos/machine-learning.png" loading="lazy" decoding="async" alt=""><span>Machine Learning</span></div>
+            <div class="skill-pill"><img src="assets/logos/n8n.png" loading="lazy" decoding="async" alt=""><span>n8n</span></div>
+            <div class="skill-pill"><img src="assets/logos/dust.png" loading="lazy" decoding="async" alt=""><span>Dust</span></div>
+            <div class="skill-pill"><img src="assets/logos/scraping.png" loading="lazy" decoding="async" alt=""><span>Scraping</span></div>
+            <div class="skill-pill"><img src="assets/logos/beautifulsoup.png" loading="lazy" decoding="async" alt=""><span>BeautifulSoup</span></div>
+            <div class="skill-pill"><img src="assets/logos/cubase.png" loading="lazy" decoding="async" alt=""><span>Cubase</span></div>
 
-            <div class="skill-pill"><img src="assets/logos/python.png"><span>Python</span></div>
-            <div class="skill-pill"><img src="assets/logos/google-sheets.png"><span>Google Sheets</span></div>
-            <div class="skill-pill"><img src="assets/logos/make.png"><span>Make</span></div>
-            <div class="skill-pill"><img src="assets/logos/rag.png"><span>RAG</span></div>
-            <div class="skill-pill"><img src="assets/logos/powerbi.png"><span>Power BI</span></div>
-            <div class="skill-pill"><img src="assets/logos/tableau.png"><span>Tableau</span></div>
-            <div class="skill-pill"><img src="assets/logos/dataiku.png"><span>Dataiku</span></div>
-            <div class="skill-pill"><img src="assets/logos/api.png"><span>API</span></div>
-            <div class="skill-pill"><img src="assets/logos/llm.png"><span>AI LLM</span></div>
-            <div class="skill-pill"><img src="assets/logos/excel.png"><span>Excel</span></div>
+            <div class="skill-pill"><img src="assets/logos/python.png" loading="lazy" decoding="async" alt=""><span>Python</span></div>
+            <div class="skill-pill"><img src="assets/logos/google-sheets.png" loading="lazy" decoding="async" alt=""><span>Google Sheets</span></div>
+            <div class="skill-pill"><img src="assets/logos/make.png" loading="lazy" decoding="async" alt=""><span>Make</span></div>
+            <div class="skill-pill"><img src="assets/logos/rag.png" loading="lazy" decoding="async" alt=""><span>RAG</span></div>
+            <div class="skill-pill"><img src="assets/logos/powerbi.png" loading="lazy" decoding="async" alt=""><span>Power BI</span></div>
+            <div class="skill-pill"><img src="assets/logos/tableau.png" loading="lazy" decoding="async" alt=""><span>Tableau</span></div>
+            <div class="skill-pill"><img src="assets/logos/dataiku.png" loading="lazy" decoding="async" alt=""><span>Dataiku</span></div>
+            <div class="skill-pill"><img src="assets/logos/api.png" loading="lazy" decoding="async" alt=""><span>API</span></div>
+            <div class="skill-pill"><img src="assets/logos/llm.png" loading="lazy" decoding="async" alt=""><span>AI LLM</span></div>
+            <div class="skill-pill"><img src="assets/logos/excel.png" loading="lazy" decoding="async" alt=""><span>Excel</span></div>
         </div>
     </div>
 
-    <div class="projects-grid">
-        <a class="project-card magnetic-card video-trigger" href="synapse.mp4">
-            <h2><i data-lucide="brain-circuit"></i> Synapse</h2>
-            <p id="project1"></p>
-            <div class="tags"><span>RAG</span><span>HAL Science</span><span>LangChain</span><span>OpenAI</span></div>
-            <span class="project-link">Voir la vidéo</span>
+    <div class="projects-grid cinematic-projects">
+
+        <a class="project-card magnetic-card project-synapse video-trigger" href="synapse.mp4">
+            <canvas class="project-bg synapse-canvas"></canvas>
+
+            <div class="project-overlay"></div>
+            <div class="project-noise"></div>
+
+            <div class="project-content">
+                <span class="project-kicker">RAG · IA · Recherche</span>
+                <h2><i data-lucide="brain-circuit"></i> Synapse</h2>
+                <p id="project1"></p>
+                <div class="tags">
+                    <span>RAG</span>
+                    <span>HAL Science</span>
+                    <span>LangChain</span>
+                    <span>OpenAI</span>
+                </div>
+                <span class="project-link">Voir la vidéo</span>
+            </div>
         </a>
 
-        <a class="project-card magnetic-card" href="https://github.com/JeanRevo/Discogs_Python" target="_blank">
-            <h2><i data-lucide="disc-3"></i> Discogs</h2>
-            <p id="project2"></p>
-            <div class="tags"><span>Python</span><span>Scraping</span><span>BeautifulSoup</span><span>CSV</span></div>
-            <span class="project-link">Ouvrir le projet</span>
-        </a>
+        <a class="project-card magnetic-card project-discogs discogs-card"
+   href="https://github.com/JeanRevo/Discogs_Python"
+   target="_blank">
 
-        <a class="project-card magnetic-card" href="#" target="_blank">
-            <h2><i data-lucide="layout-dashboard"></i> Mirakl</h2>
-            <p id="project3"></p>
-            <div class="tags"><span>Hackathon</span><span>Dust</span><span>React</span><span>Supabase</span></div>
-            <span class="project-link">Projet finaliste</span>
-        </a>
-
-        <a class="project-card magnetic-card" href="https://github.com/JeanRevo/atlaspred" target="_blank">
-            <h2><i data-lucide="map"></i> AtlasPred</h2>
-            <p id="project4"></p>
-            <div class="tags"><span>Machine Learning</span><span>Data</span><span>Prediction</span></div>
-            <span class="project-link">Ouvrir le projet</span>
-        </a>
-
-        <a class="project-card magnetic-card" href="https://zig-zag.fun/" target="_blank">
-            <h2><i data-lucide="shuffle"></i> Zig-Zag</h2>
-            <p id="project5"></p>
-            <div class="tags"><span>Game</span><span>Interaction</span><span>Créativité</span></div>
-            <img src="assets/images/perso-04.png" class="project-character">
-            <span class="project-link">Jouer</span>
-        </a>
+    <div class="discogs-vinyl" aria-hidden="true">
+        <svg viewBox="0 0 420 420">
+            <circle cx="210" cy="210" r="190"></circle>
+            <circle cx="210" cy="210" r="168"></circle>
+            <circle cx="210" cy="210" r="146"></circle>
+            <circle cx="210" cy="210" r="124"></circle>
+            <circle cx="210" cy="210" r="102"></circle>
+            <circle cx="210" cy="210" r="80"></circle>
+            <circle cx="210" cy="210" r="58"></circle>
+            <circle class="data-groove" cx="210" cy="210" r="178"></circle>
+            <circle class="vinyl-label" cx="210" cy="210" r="28"></circle>
+        </svg>
     </div>
+
+    <div class="project-overlay"></div>
+    <div class="project-noise"></div>
+
+    <img
+        src="assets/images/discogs-logo.png"
+        class="discogs-logo"
+        loading="lazy"
+        decoding="async"
+        alt="Discogs Logo"
+    >
+
+    <div class="project-content discogs-content">
+        <span class="project-kicker discogs-kicker">SCRAPING · DATA EXTRACTION · VINYL</span>
+
+        <h2 class="discogs-title">
+            <i data-lucide="disc-3"></i>
+            Discogs
+        </h2>
+
+        <p id="project2"></p>
+
+        <div class="tags discogs-tags">
+            <span data-tag="Python">Python</span>
+            <span data-tag="Scraping">Scraping</span>
+            <span data-tag="Data Cleaning">Data Cleaning</span>
+            <span data-tag="CSV">CSV</span>
+            <span data-tag="Anti-Bot">Anti-Bot</span>
+        </div>
+
+        <span class="project-link">Ouvrir le projet</span>
+    </div>
+</a>
+            <a class="project-card magnetic-card project-mirakl mirakl-card" href="#" target="_blank">
+    <div class="mirakl-grid"></div>
+    <div class="mirakl-scanline"></div>
+
+    <div class="mirakl-architecture" aria-hidden="true">
+        <div class="mirakl-layer layer-finance">
+            <span>FIN</span>
+            <i></i>
+        </div>
+        <div class="mirakl-layer layer-ops">
+            <span>OPS</span>
+            <i></i>
+        </div>
+        <div class="mirakl-layer layer-marketing">
+            <span>MKT</span>
+            <i></i>
+        </div>
+        <div class="mirakl-layer layer-ecosystem">
+            <span>ECO</span>
+            <i></i>
+        </div>
+    </div>
+
+    <div class="project-overlay mirakl-overlay"></div>
+    <div class="project-noise"></div>
+
+    <div class="project-content mirakl-content">
+        <span class="project-kicker">DASHBOARD · ARCHITECTURE · MULTI-MARKETPLACE</span>
+
+        <h2>
+            <i data-lucide="layers-3"></i>
+            Mirakl
+        </h2>
+
+        <p id="project3">
+            Dashboard multi-marketplaces adaptatif : une même source de vérité dans Supabase, mais quatre lectures métiers — Finance, Ops, Marketing et Écosystème — générées dynamiquement.
+        </p>
+
+        <div class="tags mirakl-tags">
+            <span>React</span>
+            <span>Supabase</span>
+            <span>Dust</span>
+            <span>n8n</span>
+            <span>Data Viz</span>
+        </div>
+
+        <span class="project-link">Projet finaliste</span>
+    </div>
+</a>
+
+<a class="project-card magnetic-card project-atlas atlas-pred-card" href="https://github.com/JeanRevo/atlaspred" target="_blank">
+    <canvas class="project-bg atlas-pred-canvas"></canvas>
+
+    <div class="atlas-pred-heat"></div>
+    <div class="project-overlay atlas-pred-overlay"></div>
+    <div class="project-noise"></div>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="atlas-pred-icon" fill="none" stroke="#EAEAEA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 6.5C9.5 4.5 4.5 5.5 2 7.5v12c2.5-2 7.5-3 10-1" />
+        <path d="M12 6.5C14.5 4.5 19.5 5.5 22 7.5v12c-2.5-2-7.5-3-10-1" />
+        <line x1="12" y1="6.5" x2="12" y2="18.5" />
+        <path d="M5.5 14.5C8 12.5 10 11.5 12 11.5c2 0 3.5-1.5 4-3.5" stroke-dasharray="1 2" opacity="0.6" />
+        <path d="M17.5 3.5 l1 2.5 l2.5 1 l-2.5 1 l-1 2.5 l-1 -2.5 l-2.5 -1 l2.5 -1 z" stroke-width="1" />
+    </svg>
+
+    <div class="project-content atlas-pred-content">
+        <span class="project-kicker">CARTOGRAPHIE · ML · PRÉDICTION</span>
+
+        <h2><i data-lucide="map"></i> AtlasPred</h2>
+
+        <p id="project4">
+            Outil de prédiction des tendances RH/Paie basé sur l'analyse Google Trends et LinkedIn. AtlasPred exploite des données structurées pour construire une logique d'analyse prédictive.
+        </p>
+
+        <div class="tags">
+            <span>Python</span>
+            <span>Machine Learning</span>
+            <span>Data</span>
+            <span>Prediction</span>
+            <span>Scraping</span>
+        </div>
+
+        <span class="project-link">Ouvrir le projet</span>
+    </div>
+</a>
+
+<a class="project-card magnetic-card project-zigzag zigzag-card" href="https://zig-zag.fun/" target="_blank">
+    <canvas class="project-bg zigzag-liquid-canvas"></canvas>
+
+    <div class="zigzag-grain"></div>
+    <div class="project-overlay zigzag-overlay"></div>
+    <div class="project-noise"></div>
+
+    <img
+        src="assets/images/perso-04.png"
+        class="project-character zigzag-character"
+        loading="lazy"
+        decoding="async"
+        alt=""
+    >
+
+    <div class="project-content zigzag-content">
+        <span class="project-kicker">EXPÉRIMENTAL · JEU MULTIJOUEUR · CHAOS</span>
+
+        <h2>
+            <i data-lucide="shuffle"></i>
+            <span class="scramble-target" data-text="Zig-Zag">Zig-Zag</span>
+        </h2>
+
+        <p id="project5">
+            Expérience interactive en ligne basée sur la <em>transformation</em> progressive d’une idée. Chaque joueur reçoit une information, la modifie et la transmet, créant ainsi une chaîne créative <em>imprévisible</em> entre imagination, interprétation et surprise.
+        </p>
+
+        <div class="tags zigzag-tags">
+            <span>Websockets</span>
+            <span>Creative Coding</span>
+            <span>Canvas</span>
+            <span>Multiplayer</span>
+            <span>Generative</span>
+        </div>
+
+        <span class="project-link">Jouer</span>
+    </div>
+</a>
+    </div>
+
 
     <div class="pdf-section">
         <h2 class="pdf-title" id="pdfTitle"></h2>
@@ -842,14 +1878,14 @@ h1 {
         <div class="pdf-grid">
             <a class="pdf-card pdf-trigger" href="assets/pdf/hackathon-dust-make.pdf">
                 <div class="pdf-preview">
-                    <img src="assets/images/hackathon-dust-make-cover.jpg" alt="">
+                    <img src="assets/images/hackathon-dust-make-cover.jpg" loading="lazy" decoding="async" alt="">
                 </div>
                 <span id="pdf1"></span>
             </a>
 
             <a class="pdf-card pdf-trigger" href="assets/pdf/dataiku-certification.pdf">
                 <div class="pdf-preview">
-                    <img src="assets/images/dataiku-certification-cover.jpg" alt="">
+                    <img src="assets/images/dataiku-certification-cover.jpg" loading="lazy" decoding="async" alt="">
                 </div>
                 <span id="pdf2"></span>
             </a>
@@ -876,7 +1912,7 @@ const content = {
         title: "Compétences & Projets",
         intro: "Un espace dédié aux outils que j’utilise et aux projets techniques que je construis autour de la data, de l’automatisation, de l’intelligence artificielle et de la musique.",
         project1: "Chatbot RAG scientifique basé sur les archives ouvertes HAL Science. Le projet permet de rechercher des thèses, d’analyser des PDF, de poser des questions contextualisées et d’explorer des recommandations grâce à des embeddings, FAISS, LangChain et OpenAI.",
-        project2: "Scraper Python dédié à Discogs, conçu pour extraire les albums les plus collectionnés ainsi que leurs statistiques détaillées : labels, formats, genres, prix, notes, collections et wantlists. Le projet intègre nettoyage avancé, retries, sauvegardes CSV et version safe anti-blocage.",
+        project2: "Scraper Python dédié à Discogs, conçu pour extraire les albums les plus collectionnés ainsi que leurs statistiques détaillées : labels, formats, prix et wantlists. Le projet intègre nettoyage avancé, retries et version safe anti-blocage.",
         project3: "Projet finaliste du hackathon Eugenia x Mirakl. Nous avons conçu un dashboard multi-marketplaces adaptatif : une même source de vérité dans Supabase, mais quatre lectures métiers — Finance, Ops, Marketing et Écosystème — générées dynamiquement via Dust, n8n et une interface React.",
         project4: "Projet orienté prédiction et machine learning. AtlasPred exploite des données structurées pour construire une logique d’analyse prédictive, produire des résultats interprétables et explorer la manière dont la donnée peut soutenir la prise de décision.",
         project5: "Zig-Zag est une expérience interactive en ligne basée sur la transformation progressive d’une idée. Chaque joueur reçoit une information, la modifie et la transmet, créant ainsi une chaîne créative imprévisible entre imagination, interprétation et surprise.",
@@ -888,7 +1924,7 @@ const content = {
         title: "Skills & Projects",
         intro: "A space dedicated to the tools I use and the technical projects I build around data, automation, artificial intelligence, and music.",
         project1: "A scientific RAG chatbot built on HAL Science open archives. The project enables thesis search, PDF analysis, contextual question answering, and recommendations using embeddings, FAISS, LangChain, and OpenAI.",
-        project2: "A Python scraper for Discogs designed to extract the most collected albums and detailed statistics: labels, formats, genres, prices, ratings, collections, and wantlists. It includes advanced cleaning, retries, CSV backups, and a safer anti-blocking version.",
+        project2: "A Python scraper for Discogs designed to extract the most collected albums and detailed statistics: labels, formats, prices, and wantlists. It includes advanced cleaning, retries, and a safer anti-blocking version.",
         project3: "Finalist project from the Eugenia x Mirakl hackathon. We designed an adaptive multi-marketplace dashboard: one source of truth in Supabase, but four business perspectives — Finance, Ops, Marketing, and Ecosystem — dynamically generated through Dust, n8n and a React interface.",
         project4: "A prediction and machine learning project. AtlasPred uses structured data to build predictive analysis logic, generate interpretable outputs, and explore how data can support decision-making.",
         project5: "Zig-Zag is an interactive online experience built around the transformation of an idea as it moves from one player to another. Each participant interprets and reshapes the input, creating an unpredictable chain between imagination, distortion, and creative evolution.",
@@ -1104,5 +2140,880 @@ document.querySelectorAll(".magnetic-card").forEach(card => {
 });
 </script>
 
+<script type="module">
+import * as THREE from "three";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+
+const canvas = document.querySelector(".synapse-canvas");
+
+if (canvas) {
+    const card = canvas.closest(".project-card");
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2("#000b18", 0.006);
+
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+    camera.position.z = 120;
+
+    const renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+    });
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
+    renderer.setClearColor(0x000b18, 1);
+
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+
+    const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(512, 512),
+        1.35,
+        0.42,
+        0.05
+    );
+
+    bloomPass.strength = 1.8;
+    bloomPass.radius = 0.55;
+    bloomPass.threshold = 0.08;
+
+    composer.addPass(bloomPass);
+
+    const particleCount = window.innerWidth <= 900 ? 150 : 260;
+    const maxDistance = window.innerWidth <= 900 ? 30 : 34;
+    const bounds = 135;
+
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const velocities = [];
+
+    for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * bounds * 2;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * bounds * 1.55;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * bounds * 1.8;
+
+        velocities.push({
+            x: (Math.random() - 0.5) * 0.16,
+            y: (Math.random() - 0.5) * 0.16,
+            z: (Math.random() - 0.5) * 0.16
+        });
+    }
+
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+    const particleMaterial = new THREE.PointsMaterial({
+        color: 0x00f3ff,
+        size: 1.45,
+        transparent: true,
+        opacity: 0.86,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+
+    const particleSystem = new THREE.Points(geometry, particleMaterial);
+    scene.add(particleSystem);
+
+    const lineGeometry = new THREE.BufferGeometry();
+    const lineMaterial = new THREE.LineBasicMaterial({
+        color: 0x2aa8ff,
+        transparent: true,
+        opacity: 0.18,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+
+    const linesMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
+    scene.add(linesMesh);
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let isVisible = true;
+
+    card.addEventListener("mousemove", e => {
+        const rect = card.getBoundingClientRect();
+        mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 26;
+        mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 18;
+    });
+
+    card.addEventListener("mouseleave", () => {
+        mouseX = 0;
+        mouseY = 0;
+    });
+
+    function resizeSynapse() {
+        const rect = card.getBoundingClientRect();
+        const width = Math.max(1, rect.width);
+        const height = Math.max(1, rect.height);
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(width, height, false);
+        composer.setSize(width, height);
+    }
+
+    resizeSynapse();
+    window.addEventListener("resize", resizeSynapse);
+
+    const observer = new IntersectionObserver(entries => {
+        isVisible = entries[0].isIntersecting;
+    }, { threshold: 0.08 });
+
+    observer.observe(card);
+
+    function animateSynapse() {
+        requestAnimationFrame(animateSynapse);
+
+        if (!isVisible) return;
+
+        camera.position.x += (mouseX - camera.position.x) * 0.045;
+        camera.position.y += (-mouseY - camera.position.y) * 0.045;
+        camera.lookAt(scene.position);
+
+        const pos = particleSystem.geometry.attributes.position.array;
+        const linePositions = [];
+
+        for (let i = 0; i < particleCount; i++) {
+            pos[i * 3] += velocities[i].x;
+            pos[i * 3 + 1] += velocities[i].y;
+            pos[i * 3 + 2] += velocities[i].z;
+
+            if (Math.abs(pos[i * 3]) > bounds) velocities[i].x *= -1;
+            if (Math.abs(pos[i * 3 + 1]) > bounds * 0.78) velocities[i].y *= -1;
+            if (Math.abs(pos[i * 3 + 2]) > bounds) velocities[i].z *= -1;
+
+            for (let j = i + 1; j < particleCount; j++) {
+                const dx = pos[i * 3] - pos[j * 3];
+                const dy = pos[i * 3 + 1] - pos[j * 3 + 1];
+                const dz = pos[i * 3 + 2] - pos[j * 3 + 2];
+                const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                if (dist < maxDistance) {
+                    linePositions.push(
+                        pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2],
+                        pos[j * 3], pos[j * 3 + 1], pos[j * 3 + 2]
+                    );
+                }
+            }
+        }
+
+        particleSystem.geometry.attributes.position.needsUpdate = true;
+        lineGeometry.setAttribute("position", new THREE.Float32BufferAttribute(linePositions, 3));
+
+        particleSystem.rotation.y += 0.0007;
+        linesMesh.rotation.y += 0.0007;
+
+        composer.render();
+    }
+
+    animateSynapse();
+}
+</script>
+
+<script>
+const discogsCard = document.querySelector(".project-discogs");
+const discogsVinyl = document.querySelector(".discogs-vinyl");
+const discogsTags = document.querySelectorAll(".discogs-tags span");
+
+if (discogsCard && discogsVinyl) {
+    gsap.set(discogsVinyl, {
+        rotation: 0,
+        transformOrigin: "50% 50%"
+    });
+
+    const vinylSpin = gsap.to(discogsVinyl, {
+        rotation: 360,
+        duration: 18,
+        ease: "none",
+        repeat: -1
+    });
+
+    const originalTags = Array.from(discogsTags).map(tag => tag.dataset.tag);
+    const chars = "01#@$%&SCRAPE";
+
+    function scrambleTag(tag, finalText, delay = 0) {
+        let frame = 0;
+        const total = 16;
+
+        setTimeout(() => {
+            const interval = setInterval(() => {
+                tag.textContent = finalText
+                    .split("")
+                    .map((char, index) => {
+                        if (char === " ") return " ";
+                        if (index < frame / 2) return finalText[index];
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    })
+                    .join("");
+
+                frame++;
+
+                if (frame > total) {
+                    clearInterval(interval);
+                    tag.textContent = finalText;
+                }
+            }, 22);
+        }, delay);
+    }
+
+    discogsCard.addEventListener("mouseenter", () => {
+        vinylSpin.timeScale(4);
+
+        discogsTags.forEach((tag, index) => {
+            scrambleTag(tag, originalTags[index], index * 65);
+        });
+    });
+
+    discogsCard.addEventListener("mouseleave", () => {
+        gsap.to(vinylSpin, {
+            timeScale: 1,
+            duration: .8,
+            ease: "power3.out"
+        });
+    });
+}
+</script>
+<script>
+function initCanvasCard(selector, drawFn) {
+    const canvas = document.querySelector(selector);
+    if (!canvas) return;
+
+    const card = canvas.closest(".project-card");
+    const ctx = canvas.getContext("2d");
+
+    let w = 0, h = 0, t = 0, hover = 0, mx = 0, my = 0, isVisible = true;
+
+    function resize() {
+        const rect = card.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+
+        w = rect.width;
+        h = rect.height;
+
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        canvas.style.width = w + "px";
+        canvas.style.height = h + "px";
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    card.addEventListener("mouseenter", () => hover = 1);
+    card.addEventListener("mouseleave", () => {
+        hover = 0;
+        mx = 0;
+        my = 0;
+    });
+
+    card.addEventListener("mousemove", e => {
+        const rect = card.getBoundingClientRect();
+        mx = (e.clientX - rect.left) / rect.width - .5;
+        my = (e.clientY - rect.top) / rect.height - .5;
+    });
+
+    new IntersectionObserver(entries => {
+        isVisible = entries[0].isIntersecting;
+    }, { threshold: 0.08 }).observe(card);
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (!isVisible) return;
+
+        t += 0.018;
+        ctx.clearRect(0, 0, w, h);
+        drawFn(ctx, w, h, t, hover, mx, my);
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
+    animate();
+}
+
+/* MIRAKL — dashboard premium / HUD */
+initCanvasCard(".mirakl-canvas", (ctx, w, h, t, hover, mx, my) => {
+    const ox = mx * 22;
+    const oy = my * 16;
+
+    ctx.save();
+    ctx.globalAlpha = .18;
+    ctx.strokeStyle = "rgba(255,255,255,.18)";
+    ctx.lineWidth = 1;
+
+    for (let x = -60 + ox; x < w + 60; x += 42) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+    }
+
+    for (let y = -60 + oy; y < h + 60; y += 42) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+    }
+
+    ctx.restore();
+
+    const panels = [
+        [.12, .14, .25, .16],
+        [.44, .12, .36, .18],
+        [.18, .42, .28, .18],
+        [.54, .43, .28, .16]
+    ];
+
+    panels.forEach((p, i) => {
+        const x = w * p[0] + Math.sin(t + i) * 4 + ox * .28;
+        const y = h * p[1] + Math.cos(t * 1.2 + i) * 4 + oy * .22;
+        const bw = w * p[2];
+        const bh = h * p[3];
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(x, y, bw, bh, 18);
+        ctx.fillStyle = "rgba(255,255,255,.055)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,.42)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.shadowColor = "rgba(255,255,255,.55)";
+        ctx.shadowBlur = 10;
+
+        for (let k = 0; k < 3; k++) {
+            ctx.beginPath();
+            ctx.moveTo(x + 18, y + bh * (.35 + k * .18));
+
+            for (let px = 0; px < bw - 36; px += 8) {
+                const py = Math.sin(px * .065 + t * (2 + k) + i) * (5 + k * 2);
+                ctx.lineTo(x + 18 + px, y + bh * (.35 + k * .18) + py);
+            }
+
+            ctx.strokeStyle = `rgba(255,255,255,${.42 + k * .12})`;
+            ctx.lineWidth = 1.15;
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    });
+
+    ctx.save();
+    ctx.globalAlpha = .65 + hover * .25;
+    ctx.shadowColor = "rgba(255,255,255,.7)";
+    ctx.shadowBlur = 12;
+
+    for (let i = 0; i < 22; i++) {
+        const x = (Math.sin(t * .7 + i * 1.9) * .5 + .5) * w;
+        const y = (Math.cos(t * .9 + i * 1.3) * .5 + .5) * h;
+
+        ctx.beginPath();
+        ctx.arc(x + ox * .35, y + oy * .35, 1.8 + Math.sin(t * 2 + i), 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,.8)";
+        ctx.fill();
+    }
+
+    ctx.restore();
+});
+
+/* ATLAS — topographie prédictive */
+initCanvasCard(".atlas-canvas", (ctx, w, h, t, hover, mx, my) => {
+    const ox = mx * 28;
+    const oy = my * 20;
+
+    ctx.save();
+    ctx.globalAlpha = .18;
+
+    const cell = 30;
+    for (let y = -cell; y < h + cell; y += cell) {
+        for (let x = -cell; x < w + cell; x += cell) {
+            const v = Math.sin(x * .022 + t) + Math.cos(y * .028 + t * 1.2);
+            const a = .05 + Math.max(0, v) * .055;
+
+            ctx.fillStyle = `rgba(255,255,255,${a})`;
+            ctx.fillRect(x + ox * .25, y + oy * .25, cell - 2, cell - 2);
+        }
+    }
+
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalAlpha = .7 + hover * .18;
+    ctx.shadowColor = "rgba(255,255,255,.55)";
+    ctx.shadowBlur = 10;
+
+    for (let i = 0; i < 15; i++) {
+        ctx.beginPath();
+
+        const baseY = h * (.12 + i * .055);
+
+        for (let x = w * .05; x <= w * .95; x += 10) {
+            const y =
+                baseY +
+                Math.sin(x * .018 + t * 1.5 + i) * 13 +
+                Math.cos(x * .034 + t * .9 + i) * 8;
+
+            if (x === w * .05) ctx.moveTo(x + ox * .35, y + oy * .25);
+            else ctx.lineTo(x + ox * .35, y + oy * .25);
+        }
+
+        ctx.strokeStyle = i % 4 === 0 ? "rgba(255,255,255,.82)" : "rgba(255,255,255,.34)";
+        ctx.lineWidth = i % 4 === 0 ? 1.35 : .8;
+        ctx.stroke();
+    }
+
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalAlpha = .9;
+    ctx.shadowColor = "rgba(255,255,255,.85)";
+    ctx.shadowBlur = 14;
+
+    for (let i = 0; i < 7; i++) {
+        const x = w * (.18 + (i % 3) * .28) + Math.sin(t * 1.4 + i) * 8 + ox * .45;
+        const y = h * (.2 + Math.floor(i / 3) * .26) + Math.cos(t * 1.2 + i) * 8 + oy * .45;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 3.2 + Math.sin(t * 2 + i) * 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,.9)";
+        ctx.fill();
+    }
+
+    ctx.restore();
+});
+
+/* ZIG-ZAG — chemins créatifs interactifs */
+initCanvasCard(".zigzag-canvas", (ctx, w, h, t, hover, mx, my) => {
+    const ox = mx * 26;
+    const oy = my * 18;
+
+    ctx.save();
+    ctx.globalAlpha = .54 + hover * .16;
+    ctx.shadowColor = "rgba(255,255,255,.45)";
+    ctx.shadowBlur = 10;
+
+    for (let i = 0; i < 18; i++) {
+        ctx.beginPath();
+
+        for (let x = -40; x <= w + 40; x += 14) {
+            const y =
+                h * (.14 + i * .043) +
+                Math.sin(x * .018 + t * 1.9 + i) * 18 +
+                Math.cos(x * .044 + t * 1.15 + i) * 8;
+
+            if (x === -40) ctx.moveTo(x + ox * .35, y + oy * .25);
+            else ctx.lineTo(x + ox * .35, y + oy * .25);
+        }
+
+        ctx.strokeStyle = i % 3 === 0 ? "rgba(255,255,255,.72)" : "rgba(255,255,255,.28)";
+        ctx.lineWidth = i % 3 === 0 ? 1.35 : .75;
+        ctx.stroke();
+    }
+
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalAlpha = .65 + hover * .2;
+    ctx.strokeStyle = "rgba(255,255,255,.72)";
+    ctx.lineWidth = 1.1;
+    ctx.setLineDash([7, 10]);
+    ctx.shadowColor = "rgba(255,255,255,.6)";
+    ctx.shadowBlur = 10;
+
+    ctx.beginPath();
+    ctx.moveTo(w * .12 + ox, h * .7 + oy);
+    ctx.bezierCurveTo(
+        w * .32 + Math.sin(t) * 28,
+        h * .38,
+        w * .56,
+        h * .82 + Math.cos(t) * 18,
+        w * .86 + ox,
+        h * .32 + oy
+    );
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalAlpha = .75;
+
+    for (let i = 0; i < 26; i++) {
+        const x = w * .1 + ((i * 53) % Math.floor(w * .8)) + Math.sin(t + i) * 6;
+        const y = h * .12 + ((i * 37) % Math.floor(h * .68)) + Math.cos(t * 1.3 + i) * 6;
+
+        ctx.beginPath();
+        ctx.arc(x + ox * .32, y + oy * .28, 1.6 + (i % 3), 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,.76)";
+        ctx.fill();
+    }
+
+    ctx.restore();
+});
+</script>
+
+<script>
+const atlasCanvas = document.querySelector(".atlas-pred-canvas");
+
+if (atlasCanvas) {
+    const card = atlasCanvas.closest(".project-card");
+    const ctx = atlasCanvas.getContext("2d");
+
+    let w = 0;
+    let h = 0;
+    let t = 0;
+    let hover = 0;
+    let mx = 0;
+    let my = 0;
+    let isVisible = true;
+
+    function resizeAtlas() {
+        const rect = card.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+
+        w = rect.width;
+        h = rect.height;
+
+        atlasCanvas.width = w * dpr;
+        atlasCanvas.height = h * dpr;
+        atlasCanvas.style.width = w + "px";
+        atlasCanvas.style.height = h + "px";
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    card.addEventListener("mouseenter", () => hover = 1);
+    card.addEventListener("mouseleave", () => {
+        hover = 0;
+        mx = 0;
+        my = 0;
+    });
+
+    card.addEventListener("mousemove", e => {
+        const rect = card.getBoundingClientRect();
+        mx = (e.clientX - rect.left) / rect.width - .5;
+        my = (e.clientY - rect.top) / rect.height - .5;
+    });
+
+    new IntersectionObserver(entries => {
+        isVisible = entries[0].isIntersecting;
+    }, { threshold: 0.08 }).observe(card);
+
+    function drawAtlas() {
+        requestAnimationFrame(drawAtlas);
+        if (!isVisible) return;
+
+        t += 0.006 + hover * 0.006;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const ox = mx * 22;
+        const oy = my * 16;
+
+        ctx.save();
+        ctx.globalAlpha = .68 + hover * .16;
+        ctx.shadowColor = "rgba(255,255,255,.45)";
+        ctx.shadowBlur = 8;
+
+        for (let i = 0; i < 18; i++) {
+            ctx.beginPath();
+
+            const baseY = h * (.1 + i * .052);
+
+            for (let x = -30; x <= w + 30; x += 9) {
+                const noise =
+                    Math.sin(x * .018 + t * 3 + i * .7) * 16 +
+                    Math.cos(x * .032 + t * 2.2 + i) * 9 +
+                    Math.sin((x + i * 30) * .009 + t * 4) * 7;
+
+                const y = baseY + noise;
+
+                if (x === -30) ctx.moveTo(x + ox * .35, y + oy * .25);
+                else ctx.lineTo(x + ox * .35, y + oy * .25);
+            }
+
+            ctx.strokeStyle = i % 4 === 0
+                ? "rgba(255,255,255,.46)"
+                : "rgba(255,255,255,.16)";
+
+            ctx.lineWidth = i % 4 === 0 ? 1.1 : .7;
+            ctx.stroke();
+        }
+
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalAlpha = .76 + hover * .18;
+
+        for (let i = 0; i < 18; i++) {
+            const x = w * (.12 + ((i * 37) % 76) / 100) + Math.sin(t * 3 + i) * 8 + ox * .45;
+            const y = h * (.16 + ((i * 53) % 62) / 100) + Math.cos(t * 2.4 + i) * 8 + oy * .35;
+            const r = 1.4 + Math.sin(t * 4 + i) * .6;
+
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(255,255,255,.82)";
+            ctx.shadowColor = "rgba(255,255,255,.65)";
+            ctx.shadowBlur = 10;
+            ctx.fill();
+        }
+
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalAlpha = .16 + hover * .06;
+        ctx.strokeStyle = "rgba(255,255,255,.18)";
+        ctx.lineWidth = 1;
+
+        for (let x = -40 + ox; x < w + 40; x += 42) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    }
+
+    resizeAtlas();
+    window.addEventListener("resize", resizeAtlas);
+    drawAtlas();
+}
+</script>
+<script>
+const miraklCard = document.querySelector(".mirakl-card");
+
+if (miraklCard) {
+    const layers = miraklCard.querySelectorAll(".mirakl-layer");
+    const scanline = miraklCard.querySelector(".mirakl-scanline");
+    const tags = miraklCard.querySelectorAll(".mirakl-tags span");
+    const arch = miraklCard.querySelector(".mirakl-architecture");
+
+    miraklCard.addEventListener("mouseenter", () => {
+        gsap.to(layers[0], { z: 0, x: 0, y: 0, duration: .8, ease: "power4.out" });
+        gsap.to(layers[1], { z: 58, x: -16, y: 16, duration: .8, ease: "power4.out" });
+        gsap.to(layers[2], { z: 116, x: -32, y: 32, duration: .8, ease: "power4.out" });
+        gsap.to(layers[3], { z: 174, x: -48, y: 48, duration: .8, ease: "power4.out" });
+
+        gsap.fromTo(scanline,
+            { y: "-20%", opacity: 0 },
+            { y: "560px", opacity: 1, duration: 1.25, ease: "power2.inOut" }
+        );
+
+        gsap.to(tags, {
+            className: "+=is-lit",
+            stagger: .08,
+            duration: .2
+        });
+    });
+
+    miraklCard.addEventListener("mouseleave", () => {
+        gsap.to(layers[0], { z: 0, x: 0, y: 0, duration: .9, ease: "elastic.out(1,.45)" });
+        gsap.to(layers[1], { z: 34, x: -10, y: 10, duration: .9, ease: "elastic.out(1,.45)" });
+        gsap.to(layers[2], { z: 68, x: -20, y: 20, duration: .9, ease: "elastic.out(1,.45)" });
+        gsap.to(layers[3], { z: 102, x: -30, y: 30, duration: .9, ease: "elastic.out(1,.45)" });
+
+        gsap.to(scanline, { opacity: 0, duration: .35 });
+
+        tags.forEach(tag => tag.classList.remove("is-lit"));
+
+        gsap.to(arch, {
+            x: 0,
+            y: 0,
+            duration: .7,
+            ease: "power3.out"
+        });
+    });
+
+    miraklCard.addEventListener("mousemove", e => {
+        const rect = miraklCard.getBoundingClientRect();
+        const mx = (e.clientX - rect.left) / rect.width - .5;
+        const my = (e.clientY - rect.top) / rect.height - .5;
+
+        gsap.to(arch, {
+            x: mx * 22,
+            y: my * 18,
+            duration: .45,
+            ease: "power3.out"
+        });
+    });
+}
+</script>
+<script>
+const zigzagCanvas = document.querySelector(".zigzag-liquid-canvas");
+
+if (zigzagCanvas) {
+    const card = zigzagCanvas.closest(".zigzag-card");
+    const ctx = zigzagCanvas.getContext("2d");
+    const title = card.querySelector(".scramble-target");
+
+    let w = 0;
+    let h = 0;
+    let t = 0;
+    let hover = 0;
+    let isVisible = true;
+    let mx = 0;
+    let my = 0;
+
+    function resizeZigzag() {
+        const rect = card.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+        w = rect.width;
+        h = rect.height;
+
+        zigzagCanvas.width = w * dpr;
+        zigzagCanvas.height = h * dpr;
+        zigzagCanvas.style.width = w + "px";
+        zigzagCanvas.style.height = h + "px";
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    card.addEventListener("mousemove", e => {
+        const rect = card.getBoundingClientRect();
+        mx = (e.clientX - rect.left) / rect.width - .5;
+        my = (e.clientY - rect.top) / rect.height - .5;
+    });
+
+    card.addEventListener("mouseenter", () => {
+        hover = 1;
+        scrambleText(title);
+
+        gsap.to(card, {
+            rotate: -1,
+            scale: 1.018,
+            duration: .55,
+            ease: "power3.out"
+        });
+    });
+
+    card.addEventListener("mouseleave", () => {
+        hover = 0;
+        mx = 0;
+        my = 0;
+
+        gsap.to(card, {
+            rotate: 0,
+            scale: 1,
+            duration: .75,
+            ease: "elastic.out(1,.45)"
+        });
+    });
+
+    new IntersectionObserver(entries => {
+        isVisible = entries[0].isIntersecting;
+    }, { threshold: 0.08 }).observe(card);
+
+    function scrambleText(el) {
+        const original = el.dataset.text;
+        const chars = "X$%&Z#@!*?01";
+        let frame = 0;
+        const max = 18;
+
+        clearInterval(el.scrambleInterval);
+
+        el.scrambleInterval = setInterval(() => {
+            el.textContent = original
+                .split("")
+                .map((char, index) => {
+                    if (char === "-") return "-";
+                    if (index < frame / 3) return original[index];
+                    return chars[Math.floor(Math.random() * chars.length)];
+                })
+                .join("");
+
+            frame++;
+
+            if (frame > max) {
+                clearInterval(el.scrambleInterval);
+                el.textContent = original;
+            }
+        }, 28);
+    }
+
+    function drawBlob() {
+        requestAnimationFrame(drawBlob);
+        if (!isVisible) return;
+
+        t += 0.018 + hover * 0.018;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w * (.58 + mx * .08);
+        const cy = h * (.42 + my * .08);
+        const radius = Math.min(w, h) * (.26 + hover * .035);
+
+        const gradient = ctx.createRadialGradient(cx, cy, radius * .1, cx, cy, radius * 1.65);
+        gradient.addColorStop(0, hover ? "rgba(255,126,48,.32)" : "rgba(170,255,190,.18)");
+        gradient.addColorStop(.46, "rgba(116,76,160,.16)");
+        gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(t * .18);
+
+        for (let ring = 0; ring < 7; ring++) {
+            ctx.beginPath();
+
+            const points = 150;
+            const rBase = radius * (.48 + ring * .082);
+
+            for (let i = 0; i <= points; i++) {
+                const a = (i / points) * Math.PI * 2;
+
+                const distortion =
+                    Math.sin(a * 3 + t * 1.7 + ring) * 18 +
+                    Math.cos(a * 5 - t * 1.15 + ring * 2) * 10 +
+                    Math.sin(a * 9 + t * 2.1) * 5;
+
+                const r = rBase + distortion * (.38 + hover * .46);
+                const x = Math.cos(a) * r;
+                const y = Math.sin(a) * r * .72;
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+
+            ctx.closePath();
+            ctx.strokeStyle = hover
+                ? `rgba(255,166,96,${.13 + ring * .022})`
+                : `rgba(230,255,238,${.10 + ring * .018})`;
+
+            ctx.lineWidth = ring === 0 ? 1.4 : .85;
+            ctx.shadowColor = hover ? "rgba(255,126,48,.45)" : "rgba(190,255,210,.22)";
+            ctx.shadowBlur = 12;
+            ctx.stroke();
+        }
+
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalAlpha = .18 + hover * .12;
+
+        for (let i = 0; i < 58; i++) {
+            const x = (Math.sin(t * .7 + i * 2.17) * .5 + .5) * w;
+            const y = (Math.cos(t * .9 + i * 1.73) * .5 + .5) * h;
+            const size = 1 + (i % 4) * .55;
+
+            ctx.beginPath();
+            ctx.arc(x + mx * 24, y + my * 18, size, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(255,255,255,.72)";
+            ctx.fill();
+        }
+
+        ctx.restore();
+    }
+
+    resizeZigzag();
+    window.addEventListener("resize", resizeZigzag);
+    drawBlob();
+}
+</script>
 </body>
 </html>
