@@ -191,6 +191,10 @@ h1 {
     cursor: grabbing;
 }
 
+#vinyl-3d canvas {
+    touch-action: none;
+}
+
 #scene-fade {
     position: absolute;
     inset: 0;
@@ -224,26 +228,70 @@ h1 {
 
 @media (max-width: 900px) {
     .vertical-marquee {
-        width: 100px;
-        opacity: .42;
+        width: 82px;
+        opacity: .36;
     }
 
     .vertical-marquee-track {
-        left: 16px;
+        left: 12px;
     }
 
     .vertical-marquee span {
-        font-size: 58px;
+        font-size: clamp(48px, 15vw, 62px);
     }
 
     main {
-        padding: var(--header-safe-top, 120px) 22px 50px 86px;
+        padding: var(--header-safe-top, 120px) 18px 42px 78px;
+    }
+
+    .intro {
+        font-size: 16px;
+        line-height: 1.55;
+        margin-bottom: 22px;
+        text-align: left;
     }
 
     .research-scene {
-        min-height: 380px;
+        height: 58vh;
+        min-height: 360px;
+        border-radius: 24px;
     }
 }
+
+@media (max-width: 520px) {
+    .vertical-marquee {
+        width: 58px;
+        opacity: .25;
+    }
+
+    .vertical-marquee-track {
+        left: 7px;
+    }
+
+    .vertical-marquee span {
+        font-size: 44px;
+    }
+
+    main {
+        padding: var(--header-safe-top, 120px) 12px 34px 58px;
+    }
+
+    .intro {
+        font-size: 15px;
+        margin-bottom: 18px;
+    }
+
+    .research-scene {
+        height: 56vh;
+        min-height: 320px;
+        border-radius: 20px;
+    }
+
+    #researchTooltip {
+        display: none;
+    }
+}
+
 </style>
 </head>
 
@@ -318,14 +366,34 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 container.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
+
 controls.enableDamping = true;
-controls.dampingFactor = 0.06;
+controls.dampingFactor = 0.045;
+
 controls.enablePan = false;
 controls.enableZoom = true;
+
+controls.rotateSpeed = 1.85;
+controls.zoomSpeed = 1.65;
+
 controls.minDistance = 0.8;
 controls.maxDistance = 9;
+
 controls.target.copy(initialControlsTarget);
 controls.update();
+
+renderer.domElement.addEventListener("wheel", (event) => {
+    event.preventDefault();
+
+    const zoomFactor = event.deltaY > 0 ? 1.08 : 0.92;
+    camera.position.sub(controls.target);
+    camera.position.multiplyScalar(zoomFactor);
+    camera.position.add(controls.target);
+
+    camera.position.clampLength(controls.minDistance, controls.maxDistance);
+}, { passive: false });
+
+renderer.domElement.style.touchAction = "none";
 
 scene.add(new THREE.AmbientLight(0xffffff, 3));
 

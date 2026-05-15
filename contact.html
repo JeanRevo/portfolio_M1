@@ -52,6 +52,16 @@ body::after {
     mix-blend-mode: screen;
 }
 
+.progress {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--blue), var(--violet));
+    z-index: 50;
+}
+
 .vertical-marquee {
     position: fixed;
     left: 0;
@@ -308,40 +318,131 @@ main {
 }
 
 @media (max-width: 900px) {
+    .cursor-glow {
+        display: none;
+    }
+
     main {
-        padding: var(--header-safe-top, 120px) 24px 90px 86px;
+        min-height: auto;
+        padding: var(--header-safe-top, 120px) 22px 90px 86px;
     }
 
     .vertical-marquee {
-        width: 100px;
-        opacity: .42;
+        width: 86px;
+        opacity: .38;
     }
 
     .vertical-marquee-track {
-        left: 16px;
+        left: 12px;
     }
 
     .vertical-marquee span {
-        font-size: 68px;
+        font-size: 62px;
     }
 
     .hero {
+        min-height: auto;
         grid-template-columns: 1fr;
-        gap: 56px;
+        gap: 44px;
+        padding-top: 24px;
+    }
+
+    .profile-orb {
+        width: min(68vw, 300px);
+    }
+
+    .intro {
+        font-size: clamp(23px, 7vw, 34px);
+        line-height: 1.22;
+        text-align: left;
     }
 
     .links {
+        margin-top: 70px;
         grid-template-columns: 1fr;
+        gap: 18px;
     }
 
+    .contact-link,
     .contact-link:nth-child(even) {
+        min-height: 170px;
+        padding: 24px;
+        border-radius: 24px;
         transform: translateY(40px) scale(.985);
     }
+
+    .link-bottom span {
+        font-size: clamp(34px, 12vw, 52px);
+    }
 }
+
+@media (max-width: 520px) {
+    main {
+        padding-left: 64px;
+        padding-right: 16px;
+    }
+
+    .vertical-marquee {
+        width: 62px;
+        opacity: .28;
+    }
+
+    .vertical-marquee-track {
+        left: 8px;
+    }
+
+    .vertical-marquee span {
+        font-size: 48px;
+    }
+
+    .profile-orb {
+        width: min(72vw, 250px);
+    }
+
+    .profile-orb::before {
+        inset: -12px;
+    }
+
+    .profile-orb::after {
+        inset: -22px;
+    }
+
+    .links {
+        gap: 16px;
+    }
+
+    .contact-link {
+        min-height: 150px;
+        padding: 20px;
+    }
+
+    .link-top svg,
+    .link-top img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .link-bottom small {
+        font-size: 11px;
+    }
+}
+
+@media (hover: none) {
+    .cursor-glow {
+        display: none;
+    }
+
+    .profile-orb {
+        transform-style: flat;
+    }
+}
+
 </style>
 </head>
 
 <body>
+
+<div class="progress" id="progress"></div>
 
 <div class="cursor-glow" id="cursorGlow"></div>
 
@@ -440,6 +541,16 @@ const lenis = new Lenis({
     smoothWheel: true
 });
 
+const progress = document.getElementById("progress");
+
+ScrollTrigger.create({
+    start: 0,
+    end: "max",
+    onUpdate: self => {
+        progress.style.width = `${self.progress * 100}%`;
+    }
+});
+
 lenis.on("scroll", ScrollTrigger.update);
 
 gsap.ticker.add((time) => {
@@ -501,70 +612,66 @@ gsap.to(".profile-orb img", {
     }
 });
 
-const cursorGlow = document.getElementById("cursorGlow");
+if (window.matchMedia("(hover: hover)").matches) {
 
-window.addEventListener("mousemove", e => {
-    cursorGlow.style.left = `${e.clientX}px`;
-    cursorGlow.style.top = `${e.clientY}px`;
-});
+    document.querySelectorAll(".magnetic-card").forEach(card => {
+        card.addEventListener("mousemove", e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-document.querySelectorAll(".magnetic-card").forEach(card => {
-    card.addEventListener("mousemove", e => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+            card.style.setProperty("--x", `${x}px`);
+            card.style.setProperty("--y", `${y}px`);
 
-        card.style.setProperty("--x", `${x}px`);
-        card.style.setProperty("--y", `${y}px`);
+            const moveX = (x - rect.width / 2) * 0.025;
+            const moveY = (y - rect.height / 2) * 0.035;
 
-        const moveX = (x - rect.width / 2) * 0.025;
-        const moveY = (y - rect.height / 2) * 0.035;
+            gsap.to(card, {
+                x: moveX,
+                y: moveY,
+                duration: .45,
+                ease: "power3.out"
+            });
+        });
 
-        gsap.to(card, {
-            x: moveX,
-            y: moveY,
-            duration: .45,
+        card.addEventListener("mouseleave", () => {
+            gsap.to(card, {
+                x: 0,
+                y: 0,
+                duration: .7,
+                ease: "elastic.out(1, .35)"
+            });
+        });
+    });
+
+    const profileOrb = document.getElementById("profileOrb");
+
+    profileOrb.addEventListener("mousemove", e => {
+        const rect = profileOrb.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        gsap.to(profileOrb, {
+            x: x * .025,
+            y: y * .025,
+            rotateY: x * .015,
+            rotateX: -y * .015,
+            duration: .6,
             ease: "power3.out"
         });
     });
 
-    card.addEventListener("mouseleave", () => {
-        gsap.to(card, {
+    profileOrb.addEventListener("mouseleave", () => {
+        gsap.to(profileOrb, {
             x: 0,
             y: 0,
-            duration: .7,
+            rotateY: 0,
+            rotateX: 0,
+            duration: .8,
             ease: "elastic.out(1, .35)"
         });
     });
-});
-
-const profileOrb = document.getElementById("profileOrb");
-
-profileOrb.addEventListener("mousemove", e => {
-    const rect = profileOrb.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-
-    gsap.to(profileOrb, {
-        x: x * .025,
-        y: y * .025,
-        rotateY: x * .015,
-        rotateX: -y * .015,
-        duration: .6,
-        ease: "power3.out"
-    });
-});
-
-profileOrb.addEventListener("mouseleave", () => {
-    gsap.to(profileOrb, {
-        x: 0,
-        y: 0,
-        rotateY: 0,
-        rotateX: 0,
-        duration: .8,
-        ease: "elastic.out(1, .35)"
-    });
-});
+}
 </script>
 
 </body>

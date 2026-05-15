@@ -593,47 +593,146 @@ h1 {
 
 @media (max-width: 900px) {
     main {
-        padding-top: 72px;
+        padding-top: var(--header-safe-top);
+    }
+
+    .cursor-glow {
+        display: none;
     }
 
     .vertical-marquee {
-        width: 100px;
-        opacity: .42;
+        width: 82px;
+        opacity: .38;
     }
 
     .vertical-marquee-track {
-        left: 16px;
+        left: 12px;
     }
 
     .vertical-marquee span {
-        font-size: 66px;
+        font-size: clamp(48px, 16vw, 68px);
     }
 
     .hero {
-        padding: 0 24px 0 86px;
+        padding: 0 18px 0 82px;
+    }
+
+    .intro {
+        font-size: 16px;
+        line-height: 1.55;
+        margin-bottom: 36px;
+    }
+
+    .skills-marquee {
+        margin-bottom: 42px;
+        padding: 16px 0;
+    }
+
+    .skill-pill {
+        min-width: 112px;
+        height: 92px;
+        border-radius: 18px;
+    }
+
+    .skill-pill img {
+        width: 34px;
+        height: 34px;
+    }
+
+    .skill-pill span {
+        font-size: 12px;
     }
 
     .projects-grid,
     .pdf-grid {
         grid-template-columns: 1fr;
-        max-width: 540px;
+        max-width: 520px;
         margin: auto;
     }
 
     .projects-grid,
     .pdf-section {
-        padding-left: 86px;
-        padding-right: 24px;
+        padding-left: 82px;
+        padding-right: 18px;
     }
 
-    .intro {
-        padding: 0 8px;
+    .project-card {
+        min-height: auto;
+        padding: 24px;
+        border-radius: 22px;
     }
 
-    .skills-marquee {
-        margin-bottom: 50px;
+    .project-card h2 {
+        font-size: 23px;
+    }
+
+    .project-card p {
+        font-size: 14.5px;
+        text-align: left;
+    }
+
+    .pdf-preview {
+        height: 210px;
+    }
+
+    .modal-content {
+        width: 92vw;
+        height: 72vh;
+        border-radius: 22px;
     }
 }
+
+@media (max-width: 520px) {
+    .vertical-marquee {
+        width: 64px;
+        opacity: .28;
+    }
+
+    .vertical-marquee-track {
+        left: 8px;
+    }
+
+    .vertical-marquee span {
+        font-size: 48px;
+    }
+
+    .hero {
+        padding: 0 14px 0 64px;
+    }
+
+    .projects-grid,
+    .pdf-section {
+        padding-left: 64px;
+        padding-right: 14px;
+    }
+
+    .eyebrow {
+        font-size: 10px;
+        padding: 7px 11px;
+    }
+
+    .project-card {
+        padding: 20px;
+    }
+
+    .tags span {
+        font-size: 11px;
+    }
+
+    .pdf-preview {
+        height: 180px;
+    }
+}
+
+@media (hover: none) {
+    .project-card:hover,
+    .pdf-card:hover .pdf-preview,
+    .skill-pill:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
+
 </style>
 </head>
 
@@ -743,14 +842,14 @@ h1 {
         <div class="pdf-grid">
             <a class="pdf-card pdf-trigger" href="assets/pdf/hackathon-dust-make.pdf">
                 <div class="pdf-preview">
-                    <img src="assets/images/hackathon-dust-make-cover.jpg" alt="">                    </iframe>
+                    <img src="assets/images/hackathon-dust-make-cover.jpg" alt="">
                 </div>
                 <span id="pdf1"></span>
             </a>
 
             <a class="pdf-card pdf-trigger" href="assets/pdf/dataiku-certification.pdf">
                 <div class="pdf-preview">
-                    <img src="assets/images/dataiku-certification-cover.jpg" alt="">                    </iframe>
+                    <img src="assets/images/dataiku-certification-cover.jpg" alt="">
                 </div>
                 <span id="pdf2"></span>
             </a>

@@ -316,30 +316,67 @@ p {
 
 @media (max-width: 800px) {
     section {
-        padding: var(--header-safe-top) 22px 40px 86px;
+        padding: var(--header-safe-top) 18px 40px 72px;
+        align-items: flex-start;
     }
 
     .vertical-marquee {
-        width: 100px;
-        opacity: .42;
+        width: 72px;
+        opacity: .34;
     }
 
     .vertical-marquee-track {
-        left: 16px;
+        left: 10px;
     }
 
     .vertical-marquee span {
-        font-size: 66px;
+        font-size: 52px;
     }
 
     .bio-card {
-        padding: 32px;
+        padding: 26px;
+        border-radius: 22px;
+        width: 100%;
+    }
+
+    .profile-photo {
+        width: 118px;
+        height: 118px;
+    }
+
+    .name {
+        font-size: 30px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    p {
+        font-size: 16px;
+        line-height: 1.7;
+        text-align: left;
+    }
+
+    .timeline-wrapper {
+        overflow-x: auto;
+        padding-bottom: 70px;
+        scrollbar-width: none;
+    }
+
+    .timeline-wrapper::-webkit-scrollbar {
+        display: none;
     }
 
     .timeline {
-        min-width: 1000px;
+        min-width: 980px;
+    }
+
+    #floatingTooltip {
+        display: none;
     }
 }
+
 </style>
 </head>
 

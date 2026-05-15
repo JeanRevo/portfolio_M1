@@ -154,21 +154,6 @@ main {
     justify-content: center;
 }
 
-.kicker {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: fit-content;
-    padding: 9px 15px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.055);
-    backdrop-filter: blur(14px);
-    font-size: 12px;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    opacity: .82;
-}
 
 h1 {
     margin: 34px 0 24px;
@@ -186,15 +171,6 @@ h1 {
     opacity: .78;
 }
 
-.scroll-hint {
-    position: absolute;
-    left: 15vw;
-    bottom: 42px;
-    font-size: 12px;
-    letter-spacing: .22em;
-    text-transform: uppercase;
-    opacity: .48;
-}
 
 .skill-section {
     min-height: 120vh;
@@ -240,25 +216,6 @@ h1 {
     opacity: .78;
 }
 
-.skill-meta {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-top: 30px;
-}
-
-.pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 13px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.14);
-    background: rgba(255,255,255,.055);
-    backdrop-filter: blur(14px);
-    font-size: 13px;
-    opacity: .8;
-}
 
 .image-frame {
     height: min(70vh, 720px);
@@ -373,18 +330,167 @@ h1 {
     margin: 0;
 }
 
+
 @media (max-width: 900px) {
+    .cursor-glow {
+        display: none;
+    }
+
+    .webgl-wrap {
+        opacity: .24;
+    }
+
     .vertical-marquee {
-        width: 100px;
-        opacity: .45;
+        width: 86px;
+        opacity: .38;
     }
 
     .vertical-marquee-track {
-        left: 16px;
+        left: 12px;
     }
 
     .vertical-marquee span {
-        font-size: 76px;
+        font-size: 62px;
+    }
+
+    .hero {
+        min-height: 92vh;
+        padding: var(--header-safe-top) 22px 70px 86px;
+    }
+
+    .kicker {
+        font-size: 10px;
+        padding: 8px 12px;
+    }
+
+    .intro {
+        margin-left: 0;
+        max-width: 100%;
+        font-size: 17px;
+    }
+
+    .scroll-hint {
+        left: 86px;
+        bottom: 28px;
+        font-size: 10px;
+    }
+
+    .skill-section,
+    .skill-section:nth-child(even),
+    .skill-section.wide-image {
+        min-height: auto;
+        padding: 90px 22px 90px 86px;
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+        align-items: stretch;
+    }
+
+    .skill-section:nth-child(even) .skill-copy,
+    .skill-section:nth-child(even) .image-frame,
+    .skill-section.wide-image .skill-copy,
+    .skill-section.wide-image .image-frame {
+        order: initial !important;
+    }
+
+    .skill-title,
+    .skill-section.wide-image .skill-title {
+        font-size: clamp(42px, 13vw, 76px);
+    }
+
+    .skill-desc {
+        font-size: 16px;
+        line-height: 1.6;
+        max-width: 100%;
+    }
+
+    .image-frame,
+    .skill-section.wide-image .image-frame {
+        height: 48vh;
+        min-height: 320px;
+        border-radius: 28px;
+        clip-path: inset(0% 0% 0% 0% round 28px);
+    }
+
+    .image-frame img {
+        transform: scale(1.12);
+    }
+
+    .side-index {
+        right: 14px;
+        gap: 10px;
+    }
+
+    .end {
+        min-height: 70vh;
+        padding: 90px 22px 90px 86px;
+    }
+
+    .end h2 {
+        font-size: clamp(42px, 14vw, 86px);
+    }
+}
+
+@media (max-width: 520px) {
+    .vertical-marquee {
+        width: 62px;
+        opacity: .28;
+    }
+
+    .vertical-marquee-track {
+        left: 8px;
+    }
+
+    .vertical-marquee span {
+        font-size: 48px;
+    }
+
+    .hero,
+    .skill-section,
+    .skill-section:nth-child(even),
+    .skill-section.wide-image,
+    .end {
+        padding-left: 64px;
+        padding-right: 16px;
+    }
+
+    .hero {
+        min-height: 88vh;
+    }
+
+    .scroll-hint {
+        left: 64px;
+    }
+
+    .skill-number {
+        font-size: 11px;
+    }
+
+    .skill-title,
+    .skill-section.wide-image .skill-title {
+        font-size: clamp(38px, 15vw, 64px);
+    }
+
+    .image-frame,
+    .skill-section.wide-image .image-frame {
+        height: 42vh;
+        min-height: 280px;
+        border-radius: 24px;
+    }
+
+    .pill {
+        font-size: 12px;
+        padding: 8px 11px;
+    }
+
+    .side-index {
+        display: none;
+    }
+}
+
+@media (hover: none) {
+    .cursor-glow {
+        display: none;
     }
 }
 
@@ -414,14 +520,8 @@ h1 {
 
 <main>
     <section class="hero">
-        <div class="kicker">
-            <i data-lucide="sparkles"></i>
-            <span>Human interface</span>
-        </div>
-
         <h1 id="title" class="sr-only"></h1>
         <p class="intro" id="intro"></p>
-        <div class="scroll-hint">Scroll to navigate</div>
     </section>
 
     <div id="sections"></div>
@@ -430,6 +530,7 @@ h1 {
         <h2 id="endTitle"></h2>
     </section>
 </main>
+
 
 <script>
 gsap.registerPlugin(ScrollTrigger);
@@ -506,10 +607,6 @@ data.items.forEach((item, index) => {
             <div class="skill-number">0${index + 1} / 06</div>
             <h2 class="skill-title">${item[1]}</h2>
             <p class="skill-desc">${item[2]}</p>
-            <div class="skill-meta">
-                <span class="pill"><i data-lucide="${item[0]}"></i>${item[3]}</span>
-                <span class="pill">Soft system</span>
-            </div>
         </div>
 
         <figure class="image-frame">
@@ -564,13 +661,12 @@ gsap.to(".vertical-marquee-track", {
 document.querySelectorAll(".skill-section").forEach((section, index) => {
     const title = section.querySelector(".skill-title");
     const desc = section.querySelector(".skill-desc");
-    const meta = section.querySelector(".skill-meta");
     const frame = section.querySelector(".image-frame");
     const img = section.querySelector("img");
     const dots = document.querySelectorAll(".dot");
 
     gsap.fromTo(
-        [title, desc, meta],
+        [title, desc],
         { y: 90, opacity: 0 },
         {
             y: 0,
@@ -588,8 +684,10 @@ document.querySelectorAll(".skill-section").forEach((section, index) => {
     );
 
     gsap.to(frame, {
-        clipPath: "inset(0% 0% 0% 0% round 38px)",
-        ease: "none",
+    clipPath: window.innerWidth <= 900
+        ? "inset(0% 0% 0% 0% round 28px)"
+        : "inset(0% 0% 0% 0% round 38px)",        
+    ease: "none",
         scrollTrigger: {
             trigger: section,
             start: "top 85%",
