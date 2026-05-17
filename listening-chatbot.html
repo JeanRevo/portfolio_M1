@@ -466,8 +466,9 @@ async function fetchMusicRecommendations(userInput) {
     });
 
     if (!response.ok) {
-        throw new Error("Erreur API Groq.");
-    }
+        const errorText = await response.text();
+        throw new Error(errorText);
+}
 
     return await response.json();
 }
@@ -528,8 +529,8 @@ studioForm.addEventListener("submit", async (event) => {
     } catch (error) {
         loading.remove();
         appendMessage("Erreur système : impossible de joindre Le Studio.", "error");
-        console.error(error);
-    } finally {
+        console.error("ERREUR COMPLETE :", error);
+        appendMessage(error.message, "error");    } finally {
         studioInput.disabled = false;
         studioInput.focus();
     }
