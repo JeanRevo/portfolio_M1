@@ -17,10 +17,19 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: "Missing GROQ_API_KEY" });
     }
 
-    const { userInput, systemPrompt } = req.body;
+    let body = req.body;
+
+    if (typeof body === "string") {
+        body = JSON.parse(body);
+    }
+
+    const { userInput, systemPrompt } = body || {};
 
     if (!userInput || !systemPrompt) {
-        return res.status(400).json({ error: "Missing userInput or systemPrompt" });
+        return res.status(400).json({
+            error: "Missing userInput or systemPrompt",
+            receivedBody: body
+        });
     }
 
     try {
@@ -31,7 +40,7 @@ export default async function handler(req, res) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "llama3-70b-8192",
+                model: "llama-3.3-70b-versatile",
                 response_format: { type: "json_object" },
                 temperature: 0.7,
                 messages: [
@@ -43,6 +52,7 @@ export default async function handler(req, res) {
 
         if (!groqResponse.ok) {
             const errorText = await groqResponse.text();
+
             return res.status(groqResponse.status).json({
                 error: "Groq API error",
                 details: errorText
