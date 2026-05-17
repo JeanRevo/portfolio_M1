@@ -366,19 +366,14 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 container.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-
 controls.enableDamping = true;
 controls.dampingFactor = 0.045;
-
 controls.enablePan = false;
 controls.enableZoom = true;
-
 controls.rotateSpeed = 1.85;
 controls.zoomSpeed = 1.65;
-
 controls.minDistance = 0.8;
 controls.maxDistance = 9;
-
 controls.target.copy(initialControlsTarget);
 controls.update();
 
@@ -386,6 +381,7 @@ renderer.domElement.addEventListener("wheel", (event) => {
     event.preventDefault();
 
     const zoomFactor = event.deltaY > 0 ? 1.08 : 0.92;
+
     camera.position.sub(controls.target);
     camera.position.multiplyScalar(zoomFactor);
     camera.position.add(controls.target);
@@ -409,77 +405,243 @@ const mainGroup = new THREE.Group();
 scene.add(mainGroup);
 
 let studio = null;
-const clickablePoints = [];
-
+let hoveredMesh = null;
 let isFocusing = false;
-let focusPoint = new THREE.Vector3();
-let focusCameraPosition = new THREE.Vector3();
+
+const allModelMeshes = [];
+const clickableMeshes = [];
+
+const focusPoint = new THREE.Vector3();
+const focusCameraPosition = new THREE.Vector3();
 let focusUrl = "";
 
-const pointData = [
-    {
+const DEBUG_MESH_PICKER = false;
+
+const interactableMeshesConfig = {
+    "Object_88": {
         name: "Echange sur le Technical Death Metal",
         url: "https://www.youtube.com/watch?v=ihkFPNU_wzw",
-        position: new THREE.Vector3(0.0, 0.82, 0.42)
+        cameraOffset: new THREE.Vector3(0, 0.12, 0.65)
     },
-    {
+
+    "Object_217": {
+        name: "Ethnomusicologie - Le Rap en Afrique",
+        url: "https://jeanrevo.github.io/portfolio_M1/assets/pdf/ethnomusicologie-rap-en-afrique.pdf",
+        cameraOffset: new THREE.Vector3(0, 0.12, 0.65)
+    },
+
+    "Object_71": {
         name: "Recherche et Analyse - Gorod (Death Metal)",
-        url: "assets/pdf/recherche-gorod.pdf",
-        position: new THREE.Vector3(-0.75, 0, 1)
+        url: "https://jeanrevo.github.io/portfolio_M1/assets/pdf/recherche-gorod.pdf",
+        cameraOffset: new THREE.Vector3(0, 0.12, 0.65)
     },
-    {
-        name: "Ethnomusicologie - Le rap en Afrique",
-        url: "assets/pdf/ethnomusicologie-rap-en-afrique.pdf",
-        position: new THREE.Vector3(0.92, 0.6, 1.6)
+
+        "Object_199": {
+        name: "Le Studio - Chatbot d'écoute musicale",
+        url: "listening-chatbot.html",
+        cameraOffset: new THREE.Vector3(0, 0.12, 0.65)
     }
-];
+};
 
-function createResearchPoint(data) {
-    const group = new THREE.Group();
-    group.userData.isPointGroup = true;
+function forEachMaterial(mesh, callback) {
+    if (!mesh.material) return;
 
-    const sphereGeometry = new THREE.SphereGeometry(0.07, 32, 32);
-    const sphereMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        emissive: 0x6aa8ff,
-        emissiveIntensity: 3
-    });
-
-    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere.userData.url = data.url;
-    sphere.userData.name = data.name;
-    sphere.userData.pointPosition = data.position.clone();
-
-    const glowGeometry = new THREE.SphereGeometry(0.12, 32, 32);
-    const glowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x6aa8ff,
-        transparent: true,
-        opacity: 0.25
-    });
-
-    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-
-    const ringGeometry = new THREE.RingGeometry(0.13, 0.18, 40);
-    const ringMaterial = new THREE.MeshBasicMaterial({
-        color: 0x6aa8ff,
-        transparent: true,
-        opacity: 0.6,
-        side: THREE.DoubleSide
-    });
-
-    const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-
-    group.add(glow);
-    group.add(sphere);
-    group.add(ring);
-
-    group.position.copy(data.position);
-
-    clickablePoints.push(sphere);
-    mainGroup.add(group);
+    if (Array.isArray(mesh.material)) {
+        mesh.material.forEach(callback);
+    } else {
+        callback(mesh.material);
+    }
 }
 
-pointData.forEach(createResearchPoint);
+function cloneMaterial(mesh) {
+    if (!mesh.material || mesh.userData.materialCloned) return;
+
+    if (Array.isArray(mesh.material)) {
+        mesh.material = mesh.material.map(material => material.clone());
+    } else {
+        mesh.material = mesh.material.clone();
+    }
+
+    mesh.userData.materialCloned = true;
+}
+
+function prepareMeshForHover(mesh) {
+    cloneMaterial(mesh);
+
+    if (mesh.userData.originalMaterialsState) return;
+
+    mesh.userData.originalMaterialsState = [];
+
+    forEachMaterial(mesh, (material) => {
+        mesh.userData.originalMaterialsState.push({
+            material,
+            color: material.color ? material.color.clone() : null,
+            emissive: material.emissive ? material.emissive.clone() : null,
+            emissiveIntensity: typeof material.emissiveIntensity === "number"
+                ? material.emissiveIntensity
+                : null
+        });
+    });
+}
+
+function setMeshHover(mesh, active) {
+    if (!mesh) return;
+
+    prepareMeshForHover(mesh);
+
+    mesh.userData.originalMaterialsState.forEach((state) => {
+        const material = state.material;
+
+        if (active) {
+            if (material.emissive) {
+                material.emissive.set(0x6aa8ff);
+                material.emissiveIntensity = 2.4;
+            }
+
+            if (material.color) {
+                material.color.set(0x6aa8ff);
+            }
+        } else {
+            if (material.color && state.color) {
+                material.color.copy(state.color);
+            }
+
+            if (material.emissive && state.emissive) {
+                material.emissive.copy(state.emissive);
+            }
+
+            if (
+                typeof material.emissiveIntensity === "number" &&
+                state.emissiveIntensity !== null
+            ) {
+                material.emissiveIntensity = state.emissiveIntensity;
+            }
+        }
+
+        material.needsUpdate = true;
+    });
+}
+
+function resetHoveredMesh() {
+    if (!hoveredMesh) return;
+
+    setMeshHover(hoveredMesh, false);
+    hoveredMesh = null;
+}
+
+function getObjectPath(object) {
+    const names = [];
+    let current = object;
+
+    while (current) {
+        if (current.name) names.unshift(current.name);
+        current = current.parent;
+    }
+
+    return names.join(" > ");
+}
+
+function getMeshWorldCenter(mesh) {
+    const box = new THREE.Box3().setFromObject(mesh);
+    const center = new THREE.Vector3();
+
+    if (!box.isEmpty()) {
+        box.getCenter(center);
+        return center;
+    }
+
+    mesh.getWorldPosition(center);
+    return center;
+}
+
+function updateTooltip(event, text) {
+    researchTooltip.innerText = text;
+    researchTooltip.style.left = event.clientX + "px";
+    researchTooltip.style.top = (event.clientY - 18) + "px";
+    researchTooltip.style.opacity = "1";
+    researchTooltip.style.transform = "translate(-50%, -120%)";
+}
+
+function hideTooltip() {
+    researchTooltip.style.opacity = "0";
+}
+
+function resetCamera() {
+    camera.position.copy(initialCameraPosition);
+    controls.target.copy(initialControlsTarget);
+    controls.update();
+}
+
+function focusAndOpen(pointPosition, url, cameraOffset = new THREE.Vector3(0, 0.12, 0.65)) {
+    if (isFocusing) return;
+
+    hideTooltip();
+    resetHoveredMesh();
+
+    isFocusing = true;
+    focusUrl = url;
+
+    focusPoint.copy(pointPosition);
+    focusCameraPosition.copy(pointPosition).add(cameraOffset);
+
+    researchScene.classList.add("focus-mode");
+    controls.enabled = false;
+
+    setTimeout(() => {
+        fadeOverlay.style.opacity = "1";
+    }, 1200);
+
+    setTimeout(() => {
+        window.open(focusUrl, "_blank");
+
+        resetCamera();
+
+        fadeOverlay.style.opacity = "0";
+        researchScene.classList.remove("focus-mode");
+
+        controls.enabled = true;
+        isFocusing = false;
+    }, 2100);
+}
+
+function registerModelMeshes() {
+    allModelMeshes.length = 0;
+    clickableMeshes.length = 0;
+
+    studio.updateMatrixWorld(true);
+
+    studio.traverse((child) => {
+        if (!child.isMesh) return;
+
+        allModelMeshes.push(child);
+        prepareMeshForHover(child);
+
+        const config = interactableMeshesConfig[child.name];
+
+        if (config) {
+            child.userData.name = config.name;
+            child.userData.url = config.url;
+            child.userData.cameraOffset = config.cameraOffset.clone();
+            child.userData.pointPosition = getMeshWorldCenter(child);
+
+            clickableMeshes.push(child);
+        }
+    });
+
+    console.log("---- TOUS LES MESHES DU MODÈLE ----");
+    console.table(
+        allModelMeshes.map((mesh, index) => ({
+            index,
+            name: mesh.name || "(sans nom)",
+            parent: mesh.parent?.name || "(sans parent)",
+            material: Array.isArray(mesh.material)
+                ? mesh.material.map(m => m.name).join(", ")
+                : mesh.material?.name || "(sans material)"
+        }))
+    );
+
+    console.log("Meshes interactives configurées :", clickableMeshes.map(mesh => mesh.name));
+}
 
 const loader = new GLTFLoader();
 
@@ -505,10 +667,17 @@ loader.load(
         studio.rotation.y = -0.6;
 
         mainGroup.add(studio);
+
+        registerModelMeshes();
     },
 
     function(xhr) {
-        console.log("Chargement home studio :", Math.round((xhr.loaded / xhr.total) * 100) + "%");
+        if (!xhr.total) return;
+
+        console.log(
+            "Chargement home studio :",
+            Math.round((xhr.loaded / xhr.total) * 100) + "%"
+        );
     },
 
     function(error) {
@@ -526,91 +695,103 @@ function setMousePosition(event) {
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 }
 
-function updateTooltip(event, text) {
-    researchTooltip.innerText = text;
-    researchTooltip.style.left = event.clientX + "px";
-    researchTooltip.style.top = (event.clientY - 18) + "px";
-    researchTooltip.style.opacity = "1";
-    researchTooltip.style.transform = "translate(-50%, -120%)";
+function getRaycastTargets() {
+    return DEBUG_MESH_PICKER ? allModelMeshes : clickableMeshes;
 }
-
-function hideTooltip() {
-    researchTooltip.style.opacity = "0";
-}
-
-function resetCamera() {
-    camera.position.copy(initialCameraPosition);
-    controls.target.copy(initialControlsTarget);
-    controls.update();
-}
-
-function focusAndOpen(pointPosition, url) {
-    if (isFocusing) return;
-
-    hideTooltip();
-
-    isFocusing = true;
-    focusUrl = url;
-
-    focusPoint.copy(pointPosition);
-
-    focusCameraPosition.set(
-        pointPosition.x,
-        pointPosition.y + 0.12,
-        pointPosition.z + 0.65
-    );
-
-    researchScene.classList.add("focus-mode");
-    controls.enabled = false;
-
-    setTimeout(() => {
-        fadeOverlay.style.opacity = "1";
-    }, 1200);
-
-    setTimeout(() => {
-        window.open(focusUrl, "_blank");
-
-        resetCamera();
-
-        fadeOverlay.style.opacity = "0";
-        researchScene.classList.remove("focus-mode");
-
-        controls.enabled = true;
-        isFocusing = false;
-    }, 2100);
-}
-
-renderer.domElement.addEventListener("click", (event) => {
-    setMousePosition(event);
-
-    raycaster.setFromCamera(mouse, camera);
-
-    const intersects = raycaster.intersectObjects(clickablePoints, true);
-
-    if (intersects.length > 0) {
-        const object = intersects[0].object;
-        focusAndOpen(object.userData.pointPosition, object.userData.url);
-    }
-});
 
 renderer.domElement.addEventListener("mousemove", (event) => {
-    setMousePosition(event);
+    if (!studio || isFocusing) return;
 
+    setMousePosition(event);
     raycaster.setFromCamera(mouse, camera);
 
-    const intersects = raycaster.intersectObjects(clickablePoints, true);
+    const targets = getRaycastTargets();
+    const intersects = raycaster.intersectObjects(targets, true);
 
-    if (intersects.length > 0) {
-        const object = intersects[0].object;
+    const nextHoveredMesh = intersects.length > 0 ? intersects[0].object : null;
+
+    if (nextHoveredMesh !== hoveredMesh) {
+        resetHoveredMesh();
+
+        if (nextHoveredMesh) {
+            hoveredMesh = nextHoveredMesh;
+            setMeshHover(hoveredMesh, true);
+
+            console.log("MESH SURVOLÉ :", {
+                name: hoveredMesh.name || "(sans nom)",
+                parent: hoveredMesh.parent?.name || "(sans parent)",
+                path: getObjectPath(hoveredMesh),
+                material: Array.isArray(hoveredMesh.material)
+                    ? hoveredMesh.material.map(m => m.name)
+                    : hoveredMesh.material?.name
+            });
+        }
+    }
+
+    if (hoveredMesh) {
         renderer.domElement.style.cursor = "pointer";
-        updateTooltip(event, object.userData.name);
+
+        updateTooltip(
+            event,
+            hoveredMesh.userData.name || hoveredMesh.name
+        );
     } else {
         renderer.domElement.style.cursor = "grab";
         hideTooltip();
     }
 });
 
-renderer.domElement.addEventListener("mouseleave", hideTooltip);
+renderer.domElement.addEventListener("click", async (event) => {
+    if (!studio || isFocusing) return;
+
+    setMousePosition(event);
+    raycaster.setFromCamera(mouse, camera);
+
+    const targets = getRaycastTargets();
+    const intersects = raycaster.intersectObjects(targets, true);
+
+    if (intersects.length === 0) return;
+
+    const object = intersects[0].object;
+
+    if (DEBUG_MESH_PICKER) {
+        const report = {
+            name: object.name || "(sans nom)",
+            parent: object.parent?.name || "(sans parent)",
+            path: getObjectPath(object),
+            material: Array.isArray(object.material)
+                ? object.material.map(m => m.name)
+                : object.material?.name || "(sans material)"
+        };
+
+        console.log("MESH CLIQUÉ POUR CONFIG :", report);
+
+        try {
+            await navigator.clipboard.writeText(object.name);
+            updateTooltip(event, `Copié : ${object.name || "(sans nom)"}`);
+        } catch {
+            updateTooltip(event, `Nom : ${object.name || "(sans nom)"}`);
+        }
+
+        return;
+    }
+
+    const clickableObject = clickableMeshes.includes(object) ? object : null;
+
+    if (!clickableObject) return;
+
+    focusAndOpen(
+        clickableObject.userData.pointPosition,
+        clickableObject.userData.url,
+        clickableObject.userData.cameraOffset
+    );
+});
+
+renderer.domElement.addEventListener("mouseleave", () => {
+    resetHoveredMesh();
+    hideTooltip();
+    renderer.domElement.style.cursor = "grab";
+});
 
 function animate() {
     requestAnimationFrame(animate);
@@ -621,24 +802,6 @@ function animate() {
     }
 
     controls.update();
-
-    mainGroup.children.forEach(child => {
-        if (child.userData.isPointGroup) {
-            const glow = child.children[0];
-            const ring = child.children[2];
-
-            if (glow) {
-                const scale = 1 + Math.sin(Date.now() * 0.004) * 0.2;
-                glow.scale.set(scale, scale, scale);
-            }
-
-            if (ring) {
-                ring.lookAt(camera.position);
-                ring.rotation.z += 0.02;
-            }
-        }
-    });
-
     renderer.render(scene, camera);
 }
 
@@ -647,6 +810,7 @@ animate();
 window.addEventListener("resize", () => {
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
+
     renderer.setSize(container.clientWidth, container.clientHeight);
 });
 </script>

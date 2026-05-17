@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Le Studio — Listening Booth</title>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #020617;
+    --panel: rgba(10, 15, 20, 0.75);
+    --border: rgba(0, 243, 255, 0.2);
+    --text: #EAEAEA;
+    --muted: rgba(234, 234, 234, 0.58);
+    --cyan: #00f3ff;
+    --red: #ff4444;
+    --spotify: #1DB954;
+    --deezer: #ff4fd8;
+    --apple: #ffffff;
+    --tidal: #00ffff;
+    --youtube: #ff2222;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    background:
+        radial-gradient(circle at 20% 15%, rgba(0, 243, 255, 0.08), transparent 28%),
+        radial-gradient(circle at 80% 70%, rgba(120, 50, 255, 0.10), transparent 30%),
+        linear-gradient(135deg, #020617 0%, #030712 55%, #000 100%);
+    color: var(--text);
+    font-family: "JetBrains Mono", monospace;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: radial-gradient(circle at center, black, transparent 78%);
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.025) 0px,
+        rgba(255,255,255,0.025) 1px,
+        transparent 1px,
+        transparent 4px
+    );
+    opacity: 0.16;
+    mix-blend-mode: screen;
+}
+
+.back-link {
+    position: fixed;
+    top: 22px;
+    left: 24px;
+    color: rgba(234,234,234,0.62);
+    text-decoration: none;
+    font-size: 12px;
+    z-index: 20;
+}
+
+.back-link:hover {
+    color: var(--cyan);
+}
+
+#studio-chatbot {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: min(940px, calc(100vw - 36px));
+    min-height: 610px;
+    transform: translate(-50%, -50%) scale(0.94);
+    opacity: 0;
+    padding: 28px;
+    border-radius: 28px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow:
+        0 40px 120px rgba(0,0,0,0.65),
+        inset 0 0 70px rgba(0,243,255,0.035);
+    z-index: 10;
+    overflow: hidden;
+    transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+#studio-chatbot.is-open {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+#studio-chatbot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at top left, rgba(0, 243, 255, 0.12), transparent 32%);
+}
+
+.studio-header {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.studio-kicker {
+    margin: 0 0 12px;
+    color: var(--cyan);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(34px, 6vw, 72px);
+    line-height: 0.95;
+    letter-spacing: -0.08em;
+    font-weight: 500;
+}
+
+.studio-subtitle {
+    margin: 14px 0 0;
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.65;
+    font-size: 13px;
+}
+
+.studio-status {
+    color: rgba(234,234,234,0.56);
+    font-size: 12px;
+    text-align: right;
+    line-height: 1.7;
+    white-space: nowrap;
+}
+
+.studio-status span {
+    color: var(--cyan);
+}
+
+#studio-output {
+    position: relative;
+    min-height: 340px;
+    max-height: 430px;
+    margin-top: 24px;
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.24);
+    border: 1px solid rgba(255,255,255,0.07);
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+.studio-message {
+    margin-bottom: 18px;
+}
+
+.studio-message.user {
+    color: rgba(234,234,234,0.86);
+}
+
+.studio-message.ai {
+    color: var(--text);
+}
+
+.studio-message.error {
+    color: var(--red);
+    animation: glitch 0.22s linear 3;
+}
+
+.studio-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: rgba(0,0,0,0.34);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.studio-prefix {
+    color: var(--cyan);
+}
+
+#studio-input {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+}
+
+#studio-input::placeholder {
+    color: rgba(234,234,234,0.34);
+}
+
+.studio-cursor {
+    width: 8px;
+    height: 18px;
+    background: var(--cyan);
+    animation: blink 1s steps(2, start) infinite;
+}
+
+.studio-loader {
+    display: inline-flex;
+    align-items: end;
+    gap: 4px;
+    margin-right: 10px;
+    height: 18px;
+}
+
+.studio-loader span {
+    display: block;
+    width: 3px;
+    background: var(--cyan);
+    animation: equalizer 0.75s infinite ease-in-out;
+}
+
+.studio-loader span:nth-child(1) { height: 8px; animation-delay: 0s; }
+.studio-loader span:nth-child(2) { height: 14px; animation-delay: 0.12s; }
+.studio-loader span:nth-child(3) { height: 10px; animation-delay: 0.24s; }
+.studio-loader span:nth-child(4) { height: 18px; animation-delay: 0.36s; }
+
+.recommendation {
+    margin: 0 0 18px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: recommendationReveal 0.45s ease forwards;
+}
+
+.listen-links {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: 6px;
+}
+
+.listen-links a {
+    color: rgba(234,234,234,0.72);
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.listen-links a.spotify:hover {
+    color: var(--spotify);
+    text-shadow: 0 0 12px var(--spotify);
+}
+
+.listen-links a.deezer:hover {
+    color: var(--deezer);
+    text-shadow: 0 0 12px var(--deezer);
+}
+
+.listen-links a.apple:hover {
+    color: var(--apple);
+    text-shadow: 0 0 12px var(--apple);
+}
+
+.listen-links a.tidal:hover {
+    color: var(--tidal);
+    text-shadow: 0 0 12px var(--tidal);
+}
+
+.listen-links a.youtube:hover {
+    color: var(--youtube);
+    text-shadow: 0 0 12px var(--youtube);
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+@keyframes equalizer {
+    0%, 100% { transform: scaleY(0.45); opacity: 0.45; }
+    50% { transform: scaleY(1.2); opacity: 1; }
+}
+
+@keyframes glitch {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    75% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes recommendationReveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 720px) {
+    #studio-chatbot {
+        padding: 20px;
+        min-height: auto;
+        border-radius: 22px;
+    }
+
+    .studio-header {
+        flex-direction: column;
+    }
+
+    .studio-status {
+        text-align: left;
+    }
+
+    .studio-form {
+        flex-wrap: wrap;
+    }
+
+    #studio-output {
+        max-height: 360px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<a class="back-link" href="research.html">← retour scène 3D</a>
+
+<div id="studio-chatbot" class="is-open">
+    <div class="studio-header">
+        <div>
+            <p class="studio-kicker">LISTENING BOOTH / LE STUDIO</p>
+            <h1>Le Studio</h1>
+            <p class="studio-subtitle">
+                Indique ce que tu écoutes en ce moment. Le terminal analysera tes fréquences
+                et proposera 5 pistes à explorer.
+            </p>
+        </div>
+
+        <div class="studio-status">
+            signal: <span>online</span><br>
+            model: groq / llama3<br>
+            archive: active
+        </div>
+    </div>
+
+    <div id="studio-output"></div>
+
+    <form id="studio-form" class="studio-form">
+        <span class="studio-prefix">&gt;</span>
+        <input
+            id="studio-input"
+            type="text"
+            autocomplete="off"
+            placeholder="ex: Meryl, Jul, death metal technique, jazz nocturne..."
+        >
+        <span class="studio-cursor"></span>
+    </form>
+</div>
+
+<script>
+const GROQ_PROXY_ENDPOINT = "https://portfolio-m1-ashy.vercel.app/api/le-studio";
+
+const SYSTEM_PROMPT = `You are 'Le Studio', an elite music curation AI embedded in a developer's portfolio.
+Your ONLY purpose is to recommend music based on the user's current tastes.
+
+STRICT RULES:
+1. If the input is NOT related to music, artists, genres, or songs, you MUST reject it.
+2. Respond STRICTLY in JSON.
+
+JSON FOR VALID QUERY:
+{
+  "is_music": true,
+  "recommendations": [
+    { "title": "...", "artist": "...", "album": "...", "year": "..." }
+  ],
+  "error_message": null
+}
+
+JSON FOR NON-MUSIC QUERY:
+{
+  "is_music": false,
+  "recommendations": [],
+  "error_message": "Error: Unauthorized query. 'Le Studio' is restricted to musical exploration."
+}`;
+
+const studioOutput = document.getElementById("studio-output");
+const studioForm = document.getElementById("studio-form");
+const studioInput = document.getElementById("studio-input");
+
+function escapeHTML(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function appendMessage(html, type = "ai") {
+    const message = document.createElement("div");
+    message.className = `studio-message ${type}`;
+    message.innerHTML = html;
+    studioOutput.appendChild(message);
+    studioOutput.scrollTop = studioOutput.scrollHeight;
+    return message;
+}
+
+function showLoadingMessage() {
+    return appendMessage(`
+        <span class="studio-loader">
+            <span></span><span></span><span></span><span></span>
+        </span>
+        &gt; Analyse des fréquences et extraction en cours...
+    `, "ai");
+}
+
+function createSmartLinks(title, artist) {
+    const query = encodeURIComponent(`${title} ${artist}`);
+
+    return `
+        <span class="listen-links">
+            <a class="spotify" href="https://open.spotify.com/search/${query}" target="_blank" rel="noopener">SP</a>
+            <a class="deezer" href="https://www.deezer.com/search/${query}" target="_blank" rel="noopener">DZ</a>
+            <a class="apple" href="https://music.apple.com/search?term=${query}" target="_blank" rel="noopener">AM</a>
+            <a class="tidal" href="https://listen.tidal.com/search?q=${query}" target="_blank" rel="noopener">TD</a>
+            <a class="youtube" href="https://www.youtube.com/results?search_query=${query}" target="_blank" rel="noopener">YT</a>
+        </span>
+    `;
+}
+
+async function fetchMusicRecommendations(userInput) {
+    const response = await fetch(GROQ_PROXY_ENDPOINT, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            userInput,
+            systemPrompt: SYSTEM_PROMPT
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Erreur API Groq.");
+    }
+
+    return await response.json();
+}
+
+
+function renderRecommendations(data) {
+    if (!data.is_music) {
+        appendMessage(
+            escapeHTML(data.error_message || "Error: Unauthorized query."),
+            "error"
+        );
+        return;
+    }
+
+    const recommendations = Array.isArray(data.recommendations)
+        ? data.recommendations.slice(0, 5)
+        : [];
+
+    recommendations.forEach((item, index) => {
+        const number = String(index + 1).padStart(2, "0");
+        const delay = index * 120;
+
+        const html = `
+            <div class="recommendation" style="animation-delay:${delay}ms">
+                ${number}. ${escapeHTML(item.title)} - ${escapeHTML(item.artist)} - ${escapeHTML(item.album)} (${escapeHTML(item.year)})
+                <br>
+                └─ Écouter : ${createSmartLinks(item.title, item.artist)}
+            </div>
+        `;
+
+        appendMessage(html, "ai");
+    });
+
+    setTimeout(() => {
+        appendMessage("&gt; C’est noté. Ta sélection rejoint les archives du studio.", "ai");
+    }, recommendations.length * 140 + 200);
+}
+
+studioForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const userInput = studioInput.value.trim();
+    if (!userInput) return;
+
+    appendMessage(`<span class="studio-prefix">&gt;</span> ${escapeHTML(userInput)}`, "user");
+
+    studioInput.value = "";
+    studioInput.disabled = true;
+
+    const loading = showLoadingMessage();
+
+    try {
+        const data = await fetchMusicRecommendations(userInput);
+
+        loading.remove();
+        renderRecommendations(data);
+
+    } catch (error) {
+        loading.remove();
+        appendMessage("Erreur système : impossible de joindre Le Studio.", "error");
+        console.error(error);
+    } finally {
+        studioInput.disabled = false;
+        studioInput.focus();
+    }
+});
+
+window.addEventListener("load", () => {
+    appendMessage("Bienvenue dans le listening booth. Qu’est-ce que tu écoutes en ce moment ?", "ai");
+    studioInput.focus();
+});
+</script>
+
+</body>
+</html>
