@@ -11,10 +11,10 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const GROQ_API_KEY = process.env.GROQ_API_KEY;
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-    if (!GROQ_API_KEY) {
-        return res.status(500).json({ error: "Missing GROQ_API_KEY" });
+    if (!GEMINI_API_KEY) {
+        return res.status(500).json({ error: "Missing GEMINI_API_KEY" });
     }
 
     let body = req.body;
@@ -33,40 +33,63 @@ export default async function handler(req, res) {
     }
 
     try {
-        const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        const endpoint =
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+        const geminiResponse = await fetch(endpoint, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${GROQ_API_KEY}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "llama-3.3-70b-versatile",
-                response_format: { type: "json_object" },
-                temperature: 0.7,
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userInput }
-                ]
+                systemInstruction: {
+                    parts: [
+                        {
+                            text: systemPrompt
+                        }
+                    ]
+                },
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            {
+                                text: userInput
+                            }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    temperature: 0.45
+                }
             })
         });
 
-        if (!groqResponse.ok) {
-            const errorText = await groqResponse.text();
+        if (!geminiResponse.ok) {
+            const errorText = await geminiResponse.text();
 
-            return res.status(groqResponse.status).json({
-                error: "Groq API error",
+            return res.status(geminiResponse.status).json({
+                error: "Gemini API error",
                 details: errorText
             });
         }
 
-        const groqData = await groqResponse.json();
-        const content = groqData.choices?.[0]?.message?.content;
+        const geminiData = await geminiResponse.json();
+
+        const content =
+            geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!content) {
-            return res.status(500).json({ error: "Empty Groq response" });
+            return res.status(500).json({
+                error: "Empty Gemini response",
+                raw: geminiData
+            });
         }
 
-        return res.status(200).json(JSON.parse(content));
+        const parsed = JSON.parse(content);
+
+        return res.status(200).json(parsed);
 
     } catch (error) {
         return res.status(500).json({

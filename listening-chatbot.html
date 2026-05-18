@@ -335,6 +335,32 @@ h1 {
     line-height: 1.65;
 }
 
+.recommendation-card {
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    gap: 16px;
+    align-items: start;
+}
+
+.album-cover {
+    width: 74px;
+    height: 74px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(244,235,217,0.10);
+    box-shadow:
+        0 12px 28px rgba(0,0,0,0.35),
+        0 0 24px rgba(229,192,123,0.08);
+}
+
+.album-cover.placeholder {
+    display: grid;
+    place-items: center;
+    color: rgba(244,235,217,0.28);
+    font-size: 20px;
+}
+
 .listen-links {
     display: inline-flex;
     gap: 8px;
@@ -469,7 +495,7 @@ h1 {
 
             <div class="studio-status">
                 signal: <span>online</span><br>
-                mode: curation<br>
+                mode: gemini<br>
                 archive: active
             </div>
         </div>
@@ -630,6 +656,92 @@ JSON FOR NON-MUSIC QUERY:
   "error_message": "Erreur : 'Le Studio' est réservé à l’exploration musicale."
 }`;
 
+const studioOutput = document.getElementById("studio-output");
+const studioForm = document.getElementById("studio-form");
+const studioInput = document.getElementById("studio-input");
+
+function escapeHTML(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function appendMessage(html, type = "ai") {
+    const message = document.createElement("div");
+    message.className = `studio-message ${type}`;
+    message.innerHTML = html;
+    studioOutput.appendChild(message);
+    studioOutput.scrollTop = studioOutput.scrollHeight;
+    return message;
+}
+
+function showLoadingMessage() {
+    return appendMessage(`
+        <span class="studio-loader">
+            <span></span><span></span><span></span><span></span>
+        </span>
+        › Analyse des fréquences et extraction en cours...
+    `, "ai");
+}
+
+function createSmartLinks(title, artist) {
+    const query = encodeURIComponent(`${artist} ${title}`);
+
+    return `
+        <span class="listen-links">
+            <a class="spotify" href="https://open.spotify.com/search/${query}" target="_blank" rel="noopener">SP</a>
+            <a class="deezer" href="https://www.deezer.com/search/${query}" target="_blank" rel="noopener">DZ</a>
+            <a class="apple" href="https://music.apple.com/search?term=${query}" target="_blank" rel="noopener">AM</a>
+            <a class="tidal" href="https://listen.tidal.com/search?q=${query}" target="_blank" rel="noopener">TD</a>
+            <a class="youtube" href="https://www.youtube.com/results?search_query=${query}" target="_blank" rel="noopener">YT</a>
+        </span>
+    `;
+}
+
+async function fetchAlbumCover(title, artist, album) {
+    const queries = [
+        `${artist} ${title}`,
+        `${artist} ${album}`,
+        `${title} ${artist}`,
+        `${album} ${artist}`
+    ];
+
+    for (const q of queries) {
+        try {
+            const query = encodeURIComponent(q);
+
+            const response = await fetch(
+                `https://itunes.apple.com/search?term=${query}&entity=song&country=fr&limit=5`
+            );
+
+            if (!response.ok) continue;
+
+            const data = await response.json();
+            const results = data.results || [];
+
+            const bestMatch =
+                results.find(item =>
+                    item.artistName?.toLowerCase().includes(artist.toLowerCase())
+                ) || results[0];
+
+            const artwork = bestMatch?.artworkUrl100;
+
+            if (artwork) {
+                return artwork
+                    .replace("100x100bb.jpg", "600x600bb.jpg")
+                    .replace("100x100bb.png", "600x600bb.png");
+            }
+
+        } catch {
+            continue;
+        }
+    }
+
+    return null;
+}
 
 async function fetchMusicRecommendations(userInput) {
     const response = await fetch(GROQ_PROXY_ENDPOINT, {
@@ -651,7 +763,7 @@ async function fetchMusicRecommendations(userInput) {
     return await response.json();
 }
 
-function renderRecommendations(data) {
+async function renderRecommendations(data) {
     if (!data.is_music) {
         appendMessage(
             escapeHTML(data.error_message || "Error: Unauthorized query."),
@@ -672,9 +784,15 @@ function renderRecommendations(data) {
         ? data.recommendations.slice(0, 5)
         : [];
 
-    recommendations.forEach((item, index) => {
+    for (const [index, item] of recommendations.entries()) {
         const number = String(index + 1).padStart(2, "0");
         const delay = index * 120;
+
+        const coverUrl = await fetchAlbumCover(item.title, item.artist, item.album);
+
+        const coverHTML = coverUrl
+            ? `<img class="album-cover" src="${coverUrl}" alt="${escapeHTML(item.album)}">`
+            : `<div class="album-cover placeholder">♪</div>`;
 
         const reason = item.reason
             ? `<span class="recommendation-reason">↳ ${escapeHTML(item.reason)}</span>`
@@ -682,15 +800,21 @@ function renderRecommendations(data) {
 
         const html = `
             <div class="recommendation" style="animation-delay:${delay}ms">
-                ${number}. ${escapeHTML(item.title)} — ${escapeHTML(item.artist)} — ${escapeHTML(item.album)} (${escapeHTML(item.year)})
-                <br>
-                └─ Écouter : ${createSmartLinks(item.title, item.artist)}
-                ${reason}
+                <div class="recommendation-card">
+                    ${coverHTML}
+
+                    <div>
+                        ${number}. ${escapeHTML(item.title)} — ${escapeHTML(item.artist)} — ${escapeHTML(item.album)} (${escapeHTML(item.year)})
+                        <br>
+                        └─ Écouter : ${createSmartLinks(item.title, item.artist)}
+                        ${reason}
+                    </div>
+                </div>
             </div>
         `;
 
         appendMessage(html, "ai");
-    });
+    }
 
     setTimeout(() => {
         appendMessage("› C’est noté. Ta sélection rejoint les archives du studio.", "ai");
@@ -714,7 +838,7 @@ studioForm.addEventListener("submit", async (event) => {
         const data = await fetchMusicRecommendations(userInput);
 
         loading.remove();
-        renderRecommendations(data);
+        await renderRecommendations(data);
 
     } catch (error) {
         loading.remove();
