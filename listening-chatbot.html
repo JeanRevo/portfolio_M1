@@ -301,6 +301,34 @@ h1 {
     animation: blink 1s steps(2, start) infinite;
 }
 
+.studio-submit {
+    border: 1px solid rgba(229,192,123,0.28);
+    background: rgba(229,192,123,0.08);
+    color: var(--amber);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.studio-submit:hover {
+    background: var(--amber);
+    color: #120d09;
+    transform: translateY(-1px);
+    box-shadow: 0 0 22px rgba(229,192,123,0.24);
+}
+
+.studio-submit:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 .studio-loader {
     display: inline-flex;
     align-items: end;
@@ -435,39 +463,82 @@ h1 {
 
 @media (max-width: 720px) {
     #studio-overlay {
-        padding: 24px 14px;
+        padding: 18px 12px;
+        display: block;
     }
 
     #studio-chatbot {
         width: 100%;
-        min-height: auto;
-        padding: 22px;
-        border-radius: 26px;
+        min-height: calc(100vh - 36px);
+        padding: 20px;
+        border-radius: 24px;
     }
 
     .studio-header {
         flex-direction: column;
+        gap: 18px;
+        padding-bottom: 22px;
     }
 
     .studio-status {
         text-align: left;
+        font-size: 11px;
     }
 
     h1 {
-        font-size: clamp(54px, 18vw, 82px);
+        font-size: clamp(52px, 20vw, 82px);
+        letter-spacing: -0.075em;
     }
 
     .studio-subtitle {
         font-size: 13px;
+        line-height: 1.6;
+        margin-top: 18px;
     }
 
     #studio-output {
-        max-height: 380px;
-        padding: 20px;
+        min-height: 320px;
+        max-height: 48vh;
+        padding: 18px;
+        font-size: 12px;
+        line-height: 1.65;
     }
 
     .studio-form {
-        padding: 16px;
+        padding: 13px 14px;
+        gap: 8px;
+    }
+
+    #studio-input {
+        font-size: 12px;
+        min-width: 0;
+    }
+
+    .studio-submit {
+        padding: 8px 11px;
+        font-size: 11px;
+    }
+
+    .recommendation-card {
+        grid-template-columns: 58px 1fr;
+        gap: 12px;
+    }
+
+    .album-cover {
+        width: 58px;
+        height: 58px;
+        border-radius: 10px;
+    }
+
+    .listen-links {
+        margin-left: 0;
+        margin-top: 6px;
+    }
+
+    .back-link {
+        top: 12px;
+        left: 14px;
+        font-size: 11px;
     }
 }
 </style>
@@ -493,11 +564,6 @@ h1 {
                 </p>
             </div>
 
-            <div class="studio-status">
-                signal: <span>online</span><br>
-                mode: gemini<br>
-                archive: active
-            </div>
         </div>
 
         <div id="studio-output"></div>
@@ -508,9 +574,9 @@ h1 {
                 id="studio-input"
                 type="text"
                 autocomplete="off"
-                placeholder="ex: Meryl, Jul, death metal technique, jazz nocturne..."
+                placeholder="ex : Aya Nakamura, Quincy Jones, Genesis, Possessed, M ..."
             >
-            <span class="studio-cursor"></span>
+            <button type="submit" class="studio-submit">Entrée</button>
         </form>
     </div>
 </div>
@@ -518,10 +584,22 @@ h1 {
 <script>
 const GROQ_PROXY_ENDPOINT = "https://portfolio-m1-ashy.vercel.app/api/le-studio";
 
-const SYSTEM_PROMPT = `You are 'Le Studio', an elite music curation AI embedded in a developer's portfolio.
-Your purpose is to recommend REAL music with the mindset of a passionate record store curator, musicologist, underground scene expert, and audiophile selector.
+const SYSTEM_PROMPT = `You are "Le Studio", an elite music curation AI embedded inside a cinematic audiophile portfolio.
 
-GENERAL BEHAVIOR:
+Your role is NOT to behave like a generic streaming recommendation algorithm.
+You behave like:
+- a passionate record store curator,
+- a musicologist,
+- an underground scene expert,
+- a crate digger,
+- an audiophile selector.
+
+Your goal is to recommend REAL music with strong stylistic coherence and cultural credibility.
+
+━━━━━━━━━━━━━━━━━━
+GENERAL BEHAVIOR
+━━━━━━━━━━━━━━━━━━
+
 The user may enter:
 - an artist,
 - a band,
@@ -529,82 +607,131 @@ The user may enter:
 - an album,
 - a track,
 - a genre,
-- a musical scene,
+- a scene,
+- a mood,
 - an atmosphere,
-- or a mood.
+- or a musical description.
 
-You must interpret the request intelligently and recommend musically coherent REAL music.
+You must interpret the request intelligently.
 
-IMPORTANT:
-Single-word inputs such as:
-"Jul", "Meryl", "Death", "Phoenix", "Air", "Justice", "Opeth", "Burial"
-should be interpreted as likely musical entities and NOT rejected too quickly.
+Short inputs such as:
+"Jul"
+"Meryl"
+"Death"
+"Justice"
+"Phoenix"
+"Air"
+"Burial"
+must be interpreted as likely musical entities and NOT rejected too quickly.
 
-FACTUAL ACCURACY:
+━━━━━━━━━━━━━━━━━━
+FACTUAL ACCURACY
+━━━━━━━━━━━━━━━━━━
+
 ALL recommendations MUST reference:
 - REAL artists
-- REAL songs
+- REAL tracks
 - REAL albums
 - REAL release years
 
-Never invent:
-- fake tracks,
-- fake albums,
-- fake release dates,
-- fake collaborations,
-- fake metadata.
+NEVER invent:
+- fake songs
+- fake albums
+- fake years
+- fake collaborations
+- fake metadata
 
-Accuracy is more important than creativity.
+If you are uncertain about a recommendation, choose another one.
 
-LANGUAGE RULE:
+━━━━━━━━━━━━━━━━━━
+LANGUAGE RULES
+━━━━━━━━━━━━━━━━━━
+
 1. Detect the language used by the user.
-2. Respond in the SAME language as the user.
-3. If the user writes in French, all recommendation reasons, clarification questions, and error messages must be written in French.
-4. If the user writes in English, respond in English.
-5. Preserve artist names, album titles, and track titles in their original language.
+2. Respond in the SAME language.
+3. If the user writes in French:
+- recommendation reasons,
+- clarification questions,
+- and errors
+must be written in French.
+4. Preserve artist names, albums and song titles in their original language.
 
-INTENT RULES:
-1. If the user asks for recommendations FROM THE SAME ARTIST, you MAY recommend tracks by that same artist.
-2. If the user asks for similar artists, adjacent artists, or artists in the same domain, recommend DIFFERENT artists.
-3. If the user only enters an artist name with no precision, assume they want musically similar artists.
-4. If the user gives a genre or scene, stay strictly inside that musical universe unless they explicitly ask for crossover or fusion.
-5. If the user gives a mood or atmosphere, translate it into a coherent musical direction.
+━━━━━━━━━━━━━━━━━━
+INTENT RULES
+━━━━━━━━━━━━━━━━━━
 
-STYLISTIC PRECISION:
-Preserve genre precision and avoid incorrect stylistic mixing:
+1. If the user asks for recommendations FROM THE SAME ARTIST,
+you MAY recommend tracks by that same artist.
+
+2. If the user asks for:
+- similar artists,
+- adjacent artists,
+- same scene,
+- same vibe,
+recommend DIFFERENT artists.
+
+3. If the user only enters an artist name with no precision,
+assume they want musically similar artists.
+
+4. If the user gives:
+- a genre,
+- a scene,
+- a musical atmosphere,
+stay strictly inside that universe unless explicitly asked otherwise.
+
+━━━━━━━━━━━━━━━━━━
+STYLISTIC PRECISION
+━━━━━━━━━━━━━━━━━━
+
+Preserve stylistic precision:
 - technical death metal ≠ old school death metal
 - jazz fusion ≠ bebop
 - cloud rap ≠ boom bap
 - black metal ≠ death metal
 - shoegaze ≠ dream pop
 - hardcore punk ≠ metalcore
+- dark ambient ≠ dungeon synth
 
-CURATORIAL RULES:
-1. Favor musically credible recommendations over mainstream popularity.
+━━━━━━━━━━━━━━━━━━
+CURATORIAL RULES
+━━━━━━━━━━━━━━━━━━
+
+1. Favor musical credibility over popularity.
 2. Prioritize:
 - scene relevance,
-- artistic coherence,
-- historical relevance,
-- underground credibility,
 - emotional consistency,
-- sonic atmosphere.
-3. Prefer meaningful discoveries over generic algorithmic recommendations.
-4. Avoid repetitive recommendations across requests when possible.
+- sonic atmosphere,
+- underground credibility,
+- artistic coherence,
+- historical relevance.
+3. Prefer meaningful discoveries over generic recommendations.
+4. Avoid repetitive recommendations.
+5. Recommendations should feel hand-picked by a real music obsessive.
 
-REASON FIELD:
-The "reason" field should briefly explain:
+━━━━━━━━━━━━━━━━━━
+REASON FIELD
+━━━━━━━━━━━━━━━━━━
+
+The "reason" field must briefly explain:
 - stylistic proximity,
+- emotional similarity,
 - atmosphere,
 - instrumentation,
 - production style,
-- emotional similarity,
+- scene connection,
 - historical influence,
-- compositional similarity,
-- or scene connection.
+or compositional similarities.
 
-HOMONYM RULE:
-If the input could refer to multiple artists/bands with the same or similar name, do NOT recommend yet.
-Instead ask a clarification question listing possible artists with country when known.
+Keep it concise but intelligent.
+
+━━━━━━━━━━━━━━━━━━
+HOMONYM RULE
+━━━━━━━━━━━━━━━━━━
+
+If a query may refer to multiple artists/bands,
+DO NOT recommend yet.
+
+Ask for clarification.
 
 Example:
 Input: "Death"
@@ -613,15 +740,25 @@ Possible ambiguity:
 - Death, death metal band, United States
 - Death, proto-punk band, United States
 
-STRICT RULES:
-1. If the input is CLEARLY unrelated to music, reject it.
-2. Return EXACTLY 5 recommendations for valid non-ambiguous music queries.
-3. Do not recommend the exact same artist unless the user explicitly asks for that artist's songs, albums, or discography.
-4. Respond STRICTLY in valid JSON.
-5. Never output invalid JSON.
-6. Never add explanations outside JSON.
+━━━━━━━━━━━━━━━━━━
+STRICT RULES
+━━━━━━━━━━━━━━━━━━
 
-JSON FOR VALID QUERY:
+1. If the input is CLEARLY unrelated to music, reject it.
+2. Return EXACTLY 5 recommendations.
+3. Do not recommend the exact same artist unless explicitly requested.
+4. Respond STRICTLY in valid JSON.
+5. NEVER output invalid JSON.
+6. NEVER add explanations outside JSON.
+7. NEVER wrap JSON inside markdown.
+8. NEVER hallucinate uncertain metadata.
+
+━━━━━━━━━━━━━━━━━━
+JSON FORMAT
+━━━━━━━━━━━━━━━━━━
+
+VALID QUERY:
+
 {
   "is_music": true,
   "needs_clarification": false,
@@ -632,28 +769,30 @@ JSON FOR VALID QUERY:
       "artist": "...",
       "album": "...",
       "year": "...",
-      "reason": "Brève explication curatoriale cohérente."
+      "reason": "..."
     }
   ],
   "error_message": null
 }
 
-JSON FOR AMBIGUOUS MUSIC QUERY:
+AMBIGUOUS QUERY:
+
 {
   "is_music": true,
   "needs_clarification": true,
-  "clarification_message": "J’ai trouvé plusieurs artistes possibles pour ce nom. Lequel veux-tu dire ? 1. ... (Pays) 2. ... (Pays)",
+  "clarification_message": "J’ai trouvé plusieurs artistes possibles pour ce nom...",
   "recommendations": [],
   "error_message": null
 }
 
-JSON FOR NON-MUSIC QUERY:
+NON-MUSIC QUERY:
+
 {
   "is_music": false,
   "needs_clarification": false,
   "clarification_message": null,
   "recommendations": [],
-  "error_message": "Erreur : 'Le Studio' est réservé à l’exploration musicale."
+  "error_message": "Erreur : Le Studio est réservé à l’exploration musicale."
 }`;
 
 const studioOutput = document.getElementById("studio-output");
@@ -788,15 +927,11 @@ async function renderRecommendations(data) {
         const number = String(index + 1).padStart(2, "0");
         const delay = index * 120;
 
-        const coverUrl = await fetchAlbumCover(item.title, item.artist, item.album);
+        const coverUrl = item.cover_url || await fetchAlbumCover(item.title, item.artist, item.album);
 
         const coverHTML = coverUrl
             ? `<img class="album-cover" src="${coverUrl}" alt="${escapeHTML(item.album)}">`
             : `<div class="album-cover placeholder">♪</div>`;
-
-        const reason = item.reason
-            ? `<span class="recommendation-reason">↳ ${escapeHTML(item.reason)}</span>`
-            : "";
 
         const html = `
             <div class="recommendation" style="animation-delay:${delay}ms">
@@ -804,10 +939,9 @@ async function renderRecommendations(data) {
                     ${coverHTML}
 
                     <div>
-                        ${number}. ${escapeHTML(item.title)} — ${escapeHTML(item.artist)} — ${escapeHTML(item.album)} (${escapeHTML(item.year)})
+                        ${number}. ${escapeHTML(item.title)} — ${escapeHTML(item.artist)} — ${escapeHTML(item.album)} ${item.year && item.year !== "—" ? `(${escapeHTML(item.year)})` : ""}
                         <br>
                         └─ Écouter : ${createSmartLinks(item.title, item.artist)}
-                        ${reason}
                     </div>
                 </div>
             </div>
@@ -815,10 +949,6 @@ async function renderRecommendations(data) {
 
         appendMessage(html, "ai");
     }
-
-    setTimeout(() => {
-        appendMessage("› C’est noté. Ta sélection rejoint les archives du studio.", "ai");
-    }, recommendations.length * 140 + 200);
 }
 
 studioForm.addEventListener("submit", async (event) => {
