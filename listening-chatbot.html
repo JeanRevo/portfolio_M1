@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -37,6 +38,33 @@ body {
     font-family: "JetBrains Mono", monospace;
     background: #050403;
 }
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: #050403;
+    z-index: 9999;
+    pointer-events: none;
+    animation: studioPageReveal 1.1s ease forwards;
+}
+
+@keyframes studioPageReveal {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+    70% {
+        opacity: 0.35;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.04);
+        filter: blur(8px);
+    }
+}
+
 
 #studio-overlay {
     position: relative;
@@ -136,16 +164,19 @@ body {
         inset 0 0 80px rgba(229,192,123,0.045),
         inset 0 1px 0 rgba(255,255,255,0.08);
     opacity: 0;
-    transform: translateY(18px) scale(0.97);
+    transform: translateY(26px) scale(0.94);
+    filter: blur(8px);
     transition:
         opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1),
-        transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+        transform 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 0.75s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
 }
 
 #studio-chatbot.is-open {
     opacity: 1;
     transform: translateY(0) scale(1);
+    filter: blur(0);
 }
 
 #studio-chatbot::before {
@@ -559,8 +590,8 @@ h1 {
                 <p class="studio-kicker">Listening Booth / Le Studio</p>
                 <h1>Le Studio</h1>
                 <p class="studio-subtitle">
-                    Entre dans la cabine d’écoute. Indique un artiste, un morceau, un album,
-                    une scène ou une humeur : Le Studio te proposera cinq pistes à explorer.
+                    Tu cherches des recommandations en fonction de tes goûts musicaux ? Le Studio est là pour ça. 
+                    Tape le nom d’un artiste, d’un titre, d'un album que tu aimes et tu auras des recommandations similaires !
                 </p>
             </div>
 

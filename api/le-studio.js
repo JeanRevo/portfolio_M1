@@ -32,7 +32,7 @@ export default async function handler(req, res) {
         needs_clarification: false,
         clarification_message: null,
         recommendations: [],
-        error_message: "Tu te prends pour qui ? T’as cru que t’allais me tester ?"
+        error_message: "On parle musique ici ! Essaie avec un artiste, un genre ou un morceau."
     });
 }
 

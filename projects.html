@@ -526,6 +526,13 @@ h1 {
     opacity: 1;
 }
 
+.project-synapse:hover .synapse-character,
+.project-mirakl:hover .mirakl-character,
+.project-atlas:hover .atlas-character {
+    transform: translateY(-10px) rotate(6deg) scale(1.08);
+    opacity: 1;
+}
+
 
 .projects-grid {
     display: grid;
@@ -1892,6 +1899,14 @@ h1 {
             <div class="project-overlay"></div>
             <div class="project-noise"></div>
 
+            <img
+                src="assets/images/synapse.png"
+                class="project-character synapse-character"
+                loading="lazy"
+                decoding="async"
+                alt=""
+            >
+
             <div class="project-content">
                 <span class="project-kicker">RAG · IA · Recherche</span>
                 <h2><i data-lucide="brain-circuit"></i> Synapse</h2>
@@ -1956,7 +1971,7 @@ h1 {
         <span class="project-link">Ouvrir le projet</span>
     </div>
 </a>
-            <a class="project-card magnetic-card project-mirakl mirakl-card" href="#" target="_blank">
+            <a class="project-card magnetic-card project-mirakl mirakl-card mirakl-trigger" href="#">
     <div class="mirakl-grid"></div>
     <div class="mirakl-scanline"></div>
 
@@ -1981,6 +1996,14 @@ h1 {
 
     <div class="project-overlay mirakl-overlay"></div>
     <div class="project-noise"></div>
+
+    <img
+        src="assets/images/mirakl.png"
+        class="project-character mirakl-character"
+        loading="lazy"
+        decoding="async"
+        alt=""
+    >
 
     <div class="project-content mirakl-content">
         <span class="project-kicker">DASHBOARD · ARCHITECTURE · MULTI-MARKETPLACE</span>
@@ -2013,13 +2036,13 @@ h1 {
     <div class="project-overlay atlas-pred-overlay"></div>
     <div class="project-noise"></div>
 
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="atlas-pred-icon" fill="none" stroke="#EAEAEA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 6.5C9.5 4.5 4.5 5.5 2 7.5v12c2.5-2 7.5-3 10-1" />
-        <path d="M12 6.5C14.5 4.5 19.5 5.5 22 7.5v12c-2.5-2-7.5-3-10-1" />
-        <line x1="12" y1="6.5" x2="12" y2="18.5" />
-        <path d="M5.5 14.5C8 12.5 10 11.5 12 11.5c2 0 3.5-1.5 4-3.5" stroke-dasharray="1 2" opacity="0.6" />
-        <path d="M17.5 3.5 l1 2.5 l2.5 1 l-2.5 1 l-1 2.5 l-1 -2.5 l-2.5 -1 l2.5 -1 z" stroke-width="1" />
-    </svg>
+    <img
+        src="assets/images/atlas.png"
+        class="project-character atlas-character"
+        loading="lazy"
+        decoding="async"
+        alt=""
+    >
 
     <div class="project-content atlas-pred-content">
         <span class="project-kicker">CARTOGRAPHIE · ML · PRÉDICTION</span>
@@ -2246,6 +2269,26 @@ document.querySelectorAll(".pdf-trigger").forEach(link => {
             <embed src="${link.getAttribute("href")}#toolbar=0&navpanes=0" type="application/pdf">
         `);
     });
+});
+
+document.querySelector(".mirakl-trigger").addEventListener("click", e => {
+    e.preventDefault();
+
+    openModal(`
+        <div style="
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding: 24px;
+        ">
+            <img src="assets/mirakl/soft1.jpeg" style="width:100%; border-radius:18px; object-fit:contain;">
+            <img src="assets/mirakl/soft3.jpeg" style="width:100%; border-radius:18px; object-fit:contain;">
+            <img src="assets/mirakl/soft6.jpeg" style="width:100%; border-radius:18px; object-fit:contain;">
+        </div>
+    `);
 });
 
 modalClose.addEventListener("click", closeModal);
